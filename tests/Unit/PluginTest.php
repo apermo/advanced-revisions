@@ -36,7 +36,7 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Verify init registers activation and deactivation hooks.
+	 * Verifies init() registers activation and deactivation hooks.
 	 *
 	 * @return void
 	 */
@@ -59,7 +59,7 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Verify init stores the plugin file path.
+	 * Verifies init() stores the plugin file path.
 	 *
 	 * @return void
 	 */
@@ -80,7 +80,7 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Verify activate can be called without error.
+	 * Verifies activate() can be called without error.
 	 *
 	 * @return void
 	 */
@@ -90,7 +90,7 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Verify deactivate can be called without error.
+	 * Verifies deactivate() can be called without error.
 	 *
 	 * @return void
 	 */
@@ -100,7 +100,7 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Verify boot wires the per-type revision limit filter.
+	 * Verifies boot() wires the per-type revision limit filter.
 	 *
 	 * @return void
 	 */

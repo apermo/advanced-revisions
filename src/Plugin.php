@@ -13,7 +13,7 @@ use Apermo\AdvancedRevisions\Revisions\LimitService;
 use Apermo\AdvancedRevisions\Revisions\TaxonomyRegistrar;
 
 /**
- * Main plugin class.
+ * Represents the main plugin class.
  */
 class Plugin {
 
@@ -27,7 +27,7 @@ class Plugin {
 	private static string $file = '';
 
 	/**
-	 * Initialize the plugin.
+	 * Initializes the plugin.
 	 *
 	 * @param string $file Main plugin file path.
 	 *
@@ -51,7 +51,7 @@ class Plugin {
 	}
 
 	/**
-	 * Plugin activation.
+	 * Runs on plugin activation.
 	 *
 	 * @return void
 	 */
@@ -60,7 +60,7 @@ class Plugin {
 	}
 
 	/**
-	 * Plugin deactivation.
+	 * Runs on plugin deactivation.
 	 *
 	 * @return void
 	 */

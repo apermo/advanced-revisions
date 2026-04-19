@@ -73,7 +73,7 @@ final class LimitService {
 	}
 
 	/**
-	 * Read the configured limit for a post type. Returns null when no override
+	 * Reads the configured limit for a post type. Returns null when no override
 	 * is set, meaning "use core's default / WP_POST_REVISIONS".
 	 *
 	 * @param string $post_type Post type slug.
@@ -87,7 +87,7 @@ final class LimitService {
 	}
 
 	/**
-	 * Read the limits map from the settings option.
+	 * Reads the limits map from the settings option.
 	 *
 	 * @return array<string, int>
 	 */

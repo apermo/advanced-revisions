@@ -32,7 +32,7 @@ final class DashboardWidgetTest extends TestCase {
 	}
 
 	/**
-	 * Registering hooks into wp_dashboard_setup.
+	 * Verifies register() wires a wp_dashboard_setup hook.
 	 */
 	public function test_register_hooks_wp_dashboard_setup(): void {
 		Functions\expect( 'add_action' )
@@ -43,7 +43,7 @@ final class DashboardWidgetTest extends TestCase {
 	}
 
 	/**
-	 * Adding the widget is capability-gated; low-privilege users see nothing.
+	 * Asserts adding the widget is capability-gated; low-privilege users see nothing.
 	 */
 	public function test_add_widget_is_gated_by_capability(): void {
 		Functions\when( 'current_user_can' )->justReturn( false );
@@ -53,7 +53,7 @@ final class DashboardWidgetTest extends TestCase {
 	}
 
 	/**
-	 * Cached transients short-circuit the expensive compute path.
+	 * Asserts cached transients short-circuit the expensive compute path.
 	 */
 	public function test_stats_returns_cached_transient_when_present(): void {
 		$cached = [
@@ -70,7 +70,7 @@ final class DashboardWidgetTest extends TestCase {
 	}
 
 	/**
-	 * Flushing deletes the cache transient.
+	 * Asserts flushing deletes the cache transient.
 	 */
 	public function test_flush_deletes_the_transient(): void {
 		Functions\expect( 'delete_transient' )
@@ -81,7 +81,7 @@ final class DashboardWidgetTest extends TestCase {
 	}
 
 	/**
-	 * The add_widget helper registers the widget when capability passes.
+	 * Asserts the add_widget helper registers the widget when capability passes.
 	 */
 	public function test_add_widget_registers_when_capable(): void {
 		Functions\when( 'current_user_can' )->justReturn( true );
@@ -99,7 +99,7 @@ final class DashboardWidgetTest extends TestCase {
 	}
 
 	/**
-	 * Empty-state copy is emitted when no revisions exist.
+	 * Asserts empty-state copy is emitted when no revisions exist.
 	 */
 	public function test_render_empty_state(): void {
 		Functions\when( '__' )->returnArg();
@@ -120,7 +120,7 @@ final class DashboardWidgetTest extends TestCase {
 	}
 
 	/**
-	 * Populated stats render revision totals and the top-posts list.
+	 * Asserts populated stats render revision totals and the top-posts list.
 	 */
 	public function test_render_populated_stats(): void {
 		Functions\when( '__' )->returnArg();
@@ -157,7 +157,7 @@ final class DashboardWidgetTest extends TestCase {
 	}
 
 	/**
-	 * Malformed cached data (missing keys) is treated as a miss.
+	 * Asserts malformed cached data (missing keys) is treated as a miss.
 	 */
 	public function test_stats_treats_malformed_cache_as_miss(): void {
 		Functions\when( 'get_transient' )->justReturn( [ 'total' => 10 ] );

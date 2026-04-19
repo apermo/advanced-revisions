@@ -45,7 +45,7 @@ final class RevisionDeleterTest extends TestCase {
 	}
 
 	/**
-	 * Deletion walks each revision ID and increments the count for successes.
+	 * Walks each revision ID during deletion and increments the count for successes.
 	 */
 	public function test_delete_counts_successful_deletions(): void {
 		// No tags → nothing protected.
@@ -66,7 +66,7 @@ final class RevisionDeleterTest extends TestCase {
 	}
 
 	/**
-	 * A revision returning false from wp_delete_post_revision is not counted as deleted.
+	 * Skips revisions that return false from wp_delete_post_revision.
 	 */
 	public function test_delete_skips_rows_that_fail_to_delete(): void {
 		Functions\when( 'wp_get_object_terms' )->justReturn( [] );
@@ -82,7 +82,7 @@ final class RevisionDeleterTest extends TestCase {
 	}
 
 	/**
-	 * Protected revisions are skipped and reported.
+	 * Skips protected revisions and reports them.
 	 */
 	public function test_delete_respects_protection_flags(): void {
 		Functions\when( 'wp_get_object_terms' )->alias(
@@ -116,7 +116,7 @@ final class RevisionDeleterTest extends TestCase {
 	}
 
 	/**
-	 * Preview reports deletable + protected counts without calling wp_delete_post_revision.
+	 * Reports deletable + protected counts via preview without calling wp_delete_post_revision.
 	 */
 	public function test_preview_reports_counts_without_deleting(): void {
 		Functions\when( 'wp_get_object_terms' )->alias(

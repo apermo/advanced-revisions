@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 final class RandomizerTest extends TestCase {
 
 	/**
-	 * Same seed produces identical sequence when consumed sequentially.
+	 * Asserts the same seed produces an identical sequence when consumed sequentially.
 	 */
 	public function test_same_seed_produces_same_sequence(): void {
 		$sequence_a = [];
@@ -37,7 +37,7 @@ final class RandomizerTest extends TestCase {
 	}
 
 	/**
-	 * Different seeds diverge within a small window.
+	 * Asserts different seeds diverge within a small window.
 	 */
 	public function test_different_seeds_diverge(): void {
 		$sequence_a = [];
@@ -69,7 +69,7 @@ final class RandomizerTest extends TestCase {
 	}
 
 	/**
-	 * Picking from an empty list returns null rather than throwing.
+	 * Asserts picking from an empty list returns null rather than throwing.
 	 */
 	public function test_pick_returns_null_for_empty_list(): void {
 		$rng = new Randomizer( 1 );
@@ -78,7 +78,7 @@ final class RandomizerTest extends TestCase {
 	}
 
 	/**
-	 * Picking always returns an element of the input list.
+	 * Asserts picking always returns an element of the input list.
 	 */
 	public function test_pick_returns_element_from_list(): void {
 		$rng     = new Randomizer( 42 );
@@ -90,7 +90,7 @@ final class RandomizerTest extends TestCase {
 	}
 
 	/**
-	 * Probability values stay in the half-open interval [0, 1).
+	 * Asserts probability values stay in the half-open interval [0, 1).
 	 */
 	public function test_probability_is_bounded(): void {
 		$rng = new Randomizer( 123 );

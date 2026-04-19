@@ -63,7 +63,7 @@ final class TestPostTypesTest extends TestCase {
 	}
 
 	/**
-	 * All five test post types are registered.
+	 * Asserts all five test post types are registered.
 	 */
 	public function test_register_registers_five_post_types(): void {
 		TestPostTypes::register();
@@ -76,7 +76,7 @@ final class TestPostTypesTest extends TestCase {
 	}
 
 	/**
-	 * Article supports revisions.
+	 * Asserts article supports revisions.
 	 */
 	public function test_article_supports_revisions(): void {
 		TestPostTypes::register();
@@ -85,7 +85,7 @@ final class TestPostTypesTest extends TestCase {
 	}
 
 	/**
-	 * Page is hierarchical.
+	 * Asserts page is hierarchical.
 	 */
 	public function test_page_is_hierarchical(): void {
 		TestPostTypes::register();
@@ -94,7 +94,7 @@ final class TestPostTypesTest extends TestCase {
 	}
 
 	/**
-	 * Product registers a revisioned meta key for exercising #9.
+	 * Asserts product registers a revisioned meta key for exercising #9.
 	 */
 	public function test_product_registers_meta(): void {
 		TestPostTypes::register();
@@ -106,7 +106,7 @@ final class TestPostTypesTest extends TestCase {
 	}
 
 	/**
-	 * Note intentionally excludes revisions so "revisions disabled" scenarios are covered.
+	 * Asserts note intentionally excludes revisions so "revisions disabled" scenarios are covered.
 	 */
 	public function test_note_does_not_support_revisions(): void {
 		TestPostTypes::register();
@@ -115,7 +115,7 @@ final class TestPostTypesTest extends TestCase {
 	}
 
 	/**
-	 * Private doc is not public so capability gating can be exercised.
+	 * Asserts private doc is not public so capability gating can be exercised.
 	 */
 	public function test_private_is_not_public(): void {
 		TestPostTypes::register();
@@ -125,7 +125,7 @@ final class TestPostTypesTest extends TestCase {
 	}
 
 	/**
-	 * Every registered type uses its own capability type so tests aren't polluted
+	 * Asserts every registered type uses its own capability type so tests aren't polluted
 	 * by core-post capabilities.
 	 */
 	public function test_each_type_has_own_capability_type(): void {
@@ -138,7 +138,7 @@ final class TestPostTypesTest extends TestCase {
 	}
 
 	/**
-	 * All types are REST-visible so the block editor can use them.
+	 * Asserts all types are REST-visible so the block editor can use them.
 	 */
 	public function test_all_types_are_rest_visible(): void {
 		TestPostTypes::register();

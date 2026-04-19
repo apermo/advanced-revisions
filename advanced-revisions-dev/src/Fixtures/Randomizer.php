@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Apermo\AdvancedRevisionsDev\Fixtures;
 
 /**
- * Deterministic PRNG wrapper. Seeding the same value reproduces the same
- * sequence of calls — essential for reproducible fixture scenarios.
+ * Wraps a deterministic PRNG so the same seed reproduces the same sequence of
+ * calls — essential for reproducible fixture scenarios.
  *
  * Uses PHP's Mersenne Twister. This touches global state via mt_srand(); the
  * seeder is single-threaded (WP-CLI), so parallelism is not a concern here.
@@ -30,7 +30,7 @@ final class Randomizer {
 	}
 
 	/**
-	 * Inclusive random integer in [$min, $max].
+	 * Returns an inclusive random integer in [$min, $max].
 	 *
 	 * @param int $min Lower bound, inclusive.
 	 * @param int $max Upper bound, inclusive.
@@ -54,7 +54,7 @@ final class Randomizer {
 	}
 
 	/**
-	 * Random float in [0, 1).
+	 * Returns a random float in [0, 1).
 	 */
 	public function probability(): float {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.rand_mt_rand -- see int_between().

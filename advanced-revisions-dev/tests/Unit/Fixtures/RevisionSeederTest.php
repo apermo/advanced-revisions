@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 use WP_Post;
 
 /**
- * Unit tests for RevisionSeeder::seed(). reset() uses WP_Query and is covered
+ * Covers RevisionSeeder::seed() with unit tests. reset() uses WP_Query and is covered
  * by integration tests.
  */
 final class RevisionSeederTest extends TestCase {
@@ -92,7 +92,7 @@ final class RevisionSeederTest extends TestCase {
 	}
 
 	/**
-	 * Every inserted revision row carries the seeded-revision marker meta.
+	 * Asserts every inserted revision row carries the seeded-revision marker meta.
 	 */
 	public function test_seed_tags_rows_with_marker_meta(): void {
 		$seeder = new RevisionSeeder( new RevisionGenerator() );
@@ -116,7 +116,7 @@ final class RevisionSeederTest extends TestCase {
 	}
 
 	/**
-	 * Distribution preset bounds the revision count for each post.
+	 * Asserts the distribution preset bounds the revision count for each post.
 	 */
 	public function test_sparse_distribution_produces_at_most_five_rows_per_post(): void {
 		$seeder = new RevisionSeeder( new RevisionGenerator() );
@@ -137,7 +137,7 @@ final class RevisionSeederTest extends TestCase {
 	}
 
 	/**
-	 * Autosave ratio routes some rows to autosave post_name pattern.
+	 * Asserts the autosave ratio routes some rows to the autosave post_name pattern.
 	 */
 	public function test_autosave_ratio_produces_autosave_suffix_names(): void {
 		$seeder = new RevisionSeeder( new RevisionGenerator() );
@@ -165,7 +165,7 @@ final class RevisionSeederTest extends TestCase {
 	}
 
 	/**
-	 * Every non-orphan row links to the correct parent post ID.
+	 * Asserts every non-orphan row links to the correct parent post ID.
 	 */
 	public function test_seed_uses_post_type_revision_and_inherit_status(): void {
 		$seeder = new RevisionSeeder( new RevisionGenerator() );
@@ -189,7 +189,7 @@ final class RevisionSeederTest extends TestCase {
 	}
 
 	/**
-	 * Orphan count produces that many rows with a non-existent post_parent.
+	 * Asserts the orphan count produces that many rows with a non-existent post_parent.
 	 */
 	public function test_orphan_count_creates_orphan_rows(): void {
 		$seeder = new RevisionSeeder( new RevisionGenerator() );

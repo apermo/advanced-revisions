@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Apermo\AdvancedRevisionsDev\Fixtures;
 
 /**
- * Marker meta keys and values used to tag seeded content / revisions so the
- * reset commands can never touch real data.
+ * Centralizes marker meta keys and values used to tag seeded content / revisions
+ * so the reset commands can never touch real data.
  */
 final class Marker {
 

@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 final class RevisionGeneratorTest extends TestCase {
 
 	/**
-	 * Mutated body always differs from the original by at least one character.
+	 * Asserts the mutated body always differs from the original by at least one character.
 	 */
 	public function test_mutated_body_changes_original(): void {
 		$generator = new RevisionGenerator();
@@ -28,7 +28,7 @@ final class RevisionGeneratorTest extends TestCase {
 	}
 
 	/**
-	 * Same seed + inputs produce identical mutated body.
+	 * Asserts the same seed plus inputs produce an identical mutated body.
 	 */
 	public function test_mutated_body_is_deterministic(): void {
 		$generator = new RevisionGenerator();
@@ -40,7 +40,7 @@ final class RevisionGeneratorTest extends TestCase {
 	}
 
 	/**
-	 * Mutated body preserves the original text as a prefix, so diffs are additive.
+	 * Asserts the mutated body preserves the original text as a prefix, so diffs are additive.
 	 */
 	public function test_mutated_body_preserves_original_as_prefix(): void {
 		$generator = new RevisionGenerator();
@@ -51,7 +51,7 @@ final class RevisionGeneratorTest extends TestCase {
 	}
 
 	/**
-	 * Mutated title is usually the same as the original (only ~10% mutated).
+	 * Asserts the mutated title is usually the same as the original (only ~10% mutated).
 	 */
 	public function test_mutated_title_is_usually_unchanged(): void {
 		$generator = new RevisionGenerator();
@@ -68,7 +68,7 @@ final class RevisionGeneratorTest extends TestCase {
 	}
 
 	/**
-	 * Mutated title sometimes differs (otherwise we'd never test title diffs).
+	 * Asserts the mutated title sometimes differs (otherwise we'd never test title diffs).
 	 */
 	public function test_mutated_title_sometimes_changes(): void {
 		$generator = new RevisionGenerator();

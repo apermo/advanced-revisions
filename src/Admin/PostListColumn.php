@@ -115,7 +115,7 @@ final class PostListColumn {
 	}
 
 	/**
-	 * URL of the native revision compare screen for a post.
+	 * Returns the URL of the native revision compare screen for a post.
 	 *
 	 * Note: revision.php expects a revision ID (post_type=revision), not the
 	 * parent post ID. If we can find the latest revision, link directly to it;
@@ -263,7 +263,7 @@ final class PostListColumn {
 	}
 
 	/**
-	 * Public post types that support revisions.
+	 * Returns public post types that support revisions.
 	 *
 	 * @return array<int, string>
 	 */

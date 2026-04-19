@@ -140,7 +140,7 @@ final class RevisionLimitMetaBox {
 	}
 
 	/**
-	 * Public post types that support revisions.
+	 * Returns public post types that support revisions.
 	 *
 	 * @return array<int, string>
 	 */

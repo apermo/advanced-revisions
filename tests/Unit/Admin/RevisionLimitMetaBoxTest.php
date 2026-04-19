@@ -77,7 +77,7 @@ final class RevisionLimitMetaBoxTest extends TestCase {
 	}
 
 	/**
-	 * Registering hooks add_meta_boxes, save_post, and init.
+	 * Verifies register() wires add_meta_boxes, save_post, and init hooks.
 	 */
 	public function test_register_hooks_three_actions(): void {
 		Functions\expect( 'add_action' )
@@ -87,7 +87,7 @@ final class RevisionLimitMetaBoxTest extends TestCase {
 	}
 
 	/**
-	 * Meta registration runs for each revisable post type.
+	 * Asserts meta registration runs for each revisable post type.
 	 */
 	public function test_register_post_meta_runs_for_each_type(): void {
 		$registrations = [];
@@ -104,7 +104,7 @@ final class RevisionLimitMetaBoxTest extends TestCase {
 	}
 
 	/**
-	 * Meta box is added for each revisable post type.
+	 * Asserts the meta box is added for each revisable post type.
 	 */
 	public function test_add_meta_box_runs_for_each_type(): void {
 		$calls = [];
@@ -121,7 +121,7 @@ final class RevisionLimitMetaBoxTest extends TestCase {
 	}
 
 	/**
-	 * Rendering emits the nonce field and input markup.
+	 * Asserts rendering emits the nonce field and input markup.
 	 */
 	public function test_render_emits_expected_markup(): void {
 		$post     = new WP_Post();
@@ -136,7 +136,7 @@ final class RevisionLimitMetaBoxTest extends TestCase {
 	}
 
 	/**
-	 * Save bails on missing nonce.
+	 * Asserts save() bails on missing nonce.
 	 */
 	public function test_save_bails_without_nonce(): void {
 		$_POST = [];
@@ -148,7 +148,7 @@ final class RevisionLimitMetaBoxTest extends TestCase {
 	}
 
 	/**
-	 * Save deletes meta when the submitted value is blank.
+	 * Asserts save() deletes meta when the submitted value is blank.
 	 */
 	public function test_save_deletes_meta_on_blank_value(): void {
 		$_POST = [
@@ -164,7 +164,7 @@ final class RevisionLimitMetaBoxTest extends TestCase {
 	}
 
 	/**
-	 * Save writes meta when the submitted value is a valid number.
+	 * Asserts save() writes meta when the submitted value is a valid number.
 	 */
 	public function test_save_writes_meta_when_value_present(): void {
 		$_POST = [
@@ -181,7 +181,7 @@ final class RevisionLimitMetaBoxTest extends TestCase {
 	}
 
 	/**
-	 * Save clamps values below -1.
+	 * Asserts save() clamps values below -1.
 	 */
 	public function test_save_clamps_below_minus_one(): void {
 		$_POST = [

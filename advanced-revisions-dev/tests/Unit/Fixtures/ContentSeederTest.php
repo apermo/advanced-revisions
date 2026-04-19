@@ -12,7 +12,7 @@ use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Unit tests for ContentSeeder::seed(). The reset() path exercises WP_Query
+ * Covers ContentSeeder::seed() with unit tests. The reset() path exercises WP_Query
  * which is awkward to stub in unit tests — it's covered by integration tests.
  */
 final class ContentSeederTest extends TestCase {
@@ -97,7 +97,7 @@ final class ContentSeederTest extends TestCase {
 	}
 
 	/**
-	 * Seeder inserts the requested count of posts per target post type.
+	 * Asserts the seeder inserts the requested count of posts per target post type.
 	 */
 	public function test_seed_inserts_requested_count_per_post_type(): void {
 		$seeder = new ContentSeeder( new ContentGenerator() );
@@ -124,7 +124,7 @@ final class ContentSeederTest extends TestCase {
 	}
 
 	/**
-	 * Every inserted post is tagged with the seeded-post marker meta.
+	 * Asserts every inserted post is tagged with the seeded-post marker meta.
 	 */
 	public function test_seed_tags_every_inserted_post_with_marker_meta(): void {
 		$seeder = new ContentSeeder( new ContentGenerator() );
@@ -148,7 +148,7 @@ final class ContentSeederTest extends TestCase {
 	}
 
 	/**
-	 * The selected post type is passed through to wp_insert_post.
+	 * Asserts the selected post type is passed through to wp_insert_post.
 	 */
 	public function test_seed_passes_correct_post_type_to_wp_insert_post(): void {
 		$seeder = new ContentSeeder( new ContentGenerator() );
@@ -169,7 +169,7 @@ final class ContentSeederTest extends TestCase {
 	}
 
 	/**
-	 * Post status comes from the configured status-mix preset.
+	 * Asserts post status comes from the configured status-mix preset.
 	 */
 	public function test_seed_assigns_post_status_from_preset(): void {
 		$seeder = new ContentSeeder( new ContentGenerator() );
@@ -191,7 +191,7 @@ final class ContentSeederTest extends TestCase {
 	}
 
 	/**
-	 * Missing authors are created via wp_insert_user.
+	 * Asserts missing authors are created via wp_insert_user.
 	 */
 	public function test_seed_creates_authors_when_none_exist(): void {
 		$inserted_users = 0;
@@ -220,7 +220,7 @@ final class ContentSeederTest extends TestCase {
 	}
 
 	/**
-	 * When wp_insert_post returns a WP_Error, the post is skipped and no meta is written.
+	 * Asserts that when wp_insert_post returns a WP_Error, the post is skipped and no meta is written.
 	 */
 	public function test_seed_skips_posts_when_wp_insert_post_returns_error(): void {
 		Functions\when( 'wp_insert_post' )->justReturn( 'sentinel-error' );
@@ -246,7 +246,7 @@ final class ContentSeederTest extends TestCase {
 	}
 
 	/**
-	 * An empty post-types list returns an empty totals map without inserting anything.
+	 * Asserts an empty post-types list returns an empty totals map without inserting anything.
 	 */
 	public function test_seed_with_empty_post_types_returns_empty(): void {
 		$seeder = new ContentSeeder( new ContentGenerator() );

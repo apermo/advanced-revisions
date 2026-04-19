@@ -33,7 +33,7 @@ final class TaxonomyRegistrarTest extends TestCase {
 	}
 
 	/**
-	 * Registering wires both taxonomy and meta callbacks on init.
+	 * Verifies register() wires both taxonomy and meta callbacks on init.
 	 */
 	public function test_register_hooks_init_callbacks(): void {
 		Functions\expect( 'add_action' )
@@ -47,7 +47,7 @@ final class TaxonomyRegistrarTest extends TestCase {
 	}
 
 	/**
-	 * The taxonomy is registered against the revision post type with the expected shape.
+	 * Asserts the taxonomy is registered against the revision post type with the expected shape.
 	 */
 	public function test_register_taxonomy_uses_revision_post_type(): void {
 		$captured = [];
@@ -72,7 +72,7 @@ final class TaxonomyRegistrarTest extends TestCase {
 	}
 
 	/**
-	 * Meta registration covers both the protected flag and the note key.
+	 * Asserts meta registration covers both the protected flag and the note key.
 	 */
 	public function test_register_meta_registers_protected_flag_and_note(): void {
 		$term_meta = [];

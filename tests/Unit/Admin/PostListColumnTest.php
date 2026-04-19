@@ -53,7 +53,7 @@ final class PostListColumnTest extends TestCase {
 	}
 
 	/**
-	 * The add_column helper appends when no 'date' column exists.
+	 * Asserts the add_column helper appends when no 'date' column exists.
 	 */
 	public function test_add_column_appends_when_date_absent(): void {
 		$columns = [
@@ -71,7 +71,7 @@ final class PostListColumnTest extends TestCase {
 	}
 
 	/**
-	 * The add_column helper inserts immediately after 'date' when present.
+	 * Asserts the add_column helper inserts immediately after 'date' when present.
 	 */
 	public function test_add_column_inserts_after_date(): void {
 		$columns = [
@@ -89,7 +89,7 @@ final class PostListColumnTest extends TestCase {
 	}
 
 	/**
-	 * Row action is skipped for posts with zero revisions so the row stays clean.
+	 * Asserts the row action is skipped for posts with zero revisions so the row stays clean.
 	 */
 	public function test_add_row_action_skips_zero_count_posts(): void {
 		Functions\when( 'admin_url' )->justReturn( 'https://example.tld/wp-admin/revision.php' );
@@ -104,7 +104,7 @@ final class PostListColumnTest extends TestCase {
 	}
 
 	/**
-	 * Row action appends the Manage revisions link when the count is positive.
+	 * Asserts the row action appends the Manage revisions link when the count is positive.
 	 */
 	public function test_add_row_action_appends_link_when_revisions_exist(): void {
 		// Inject a non-zero count without running SQL by priming the cache
@@ -123,7 +123,7 @@ final class PostListColumnTest extends TestCase {
 	}
 
 	/**
-	 * The compare_url helper links to revision.php with a real revision ID.
+	 * Asserts the compare_url helper links to revision.php with a real revision ID.
 	 */
 	public function test_compare_url_builds_admin_revision_php_url(): void {
 		$revision     = new WP_Post();
@@ -137,7 +137,7 @@ final class PostListColumnTest extends TestCase {
 	}
 
 	/**
-	 * The count_for helper returns 0 when no count is cached for a post.
+	 * Asserts the count_for helper returns 0 when no count is cached for a post.
 	 */
 	public function test_count_for_returns_zero_when_unknown(): void {
 		// Isolate: ensure no $wpdb is leaking across tests.

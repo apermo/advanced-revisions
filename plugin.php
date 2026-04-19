@@ -1,5 +1,7 @@
 <?php
 /**
+ * Bootstraps the Advanced Revisions plugin.
+ *
  * Plugin Name: Advanced Revisions
  * Plugin URI:  https://github.com/apermo/advanced-revisions
  * Description: Advanced features for WordPress revisions: configurable limits per post type, an admin overview, and bulk deletion tools.

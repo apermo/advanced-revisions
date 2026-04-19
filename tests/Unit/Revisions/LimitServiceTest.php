@@ -46,7 +46,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * With no stored limits, filter returns the original count unchanged.
+	 * Asserts that with no stored limits, the filter returns the original count unchanged.
 	 */
 	public function test_filter_returns_original_when_no_limits_configured(): void {
 		Functions\when( 'get_option' )->justReturn( [] );
@@ -57,7 +57,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * A configured limit for the post's type overrides the original count.
+	 * Verifies a configured limit for the post's type overrides the original count.
 	 */
 	public function test_filter_overrides_with_configured_limit(): void {
 		Functions\when( 'get_option' )->justReturn(
@@ -70,7 +70,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * A configured limit for a different type does not affect this post.
+	 * Asserts a configured limit for a different type does not affect this post.
 	 */
 	public function test_filter_leaves_non_matching_types_alone(): void {
 		Functions\when( 'get_option' )->justReturn(
@@ -83,7 +83,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * A limit of 0 disables revisions for the post type.
+	 * Verifies a limit of 0 disables revisions for the post type.
 	 */
 	public function test_filter_applies_zero_to_disable_revisions(): void {
 		Functions\when( 'get_option' )->justReturn(
@@ -96,7 +96,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * A limit of -1 signals unlimited, matching core's WP_POST_REVISIONS convention.
+	 * Verifies a limit of -1 signals unlimited, matching core's WP_POST_REVISIONS convention.
 	 */
 	public function test_filter_applies_minus_one_for_unlimited(): void {
 		Functions\when( 'get_option' )->justReturn(
@@ -109,7 +109,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * Malformed option data (non-array) is ignored.
+	 * Ignores malformed option data (non-array).
 	 */
 	public function test_filter_ignores_malformed_option_data(): void {
 		Functions\when( 'get_option' )->justReturn( 'not-an-array' );
@@ -120,7 +120,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * Non-string post_type keys in stored limits are stripped by sanitization.
+	 * Strips non-string post_type keys from stored limits during sanitization.
 	 */
 	public function test_stored_limits_drops_non_string_keys(): void {
 		Functions\when( 'get_option' )->justReturn(
@@ -139,7 +139,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * The limit_for_type helper returns null when no override is stored.
+	 * Returns null from limit_for_type() when no override is stored.
 	 */
 	public function test_limit_for_type_returns_null_when_unset(): void {
 		Functions\when( 'get_option' )->justReturn( [ LimitService::LIMITS_KEY => [] ] );
@@ -148,7 +148,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * Per-post override wins over the per-type rule.
+	 * Asserts per-post override wins over the per-type rule.
 	 */
 	public function test_per_post_override_beats_per_type_limit(): void {
 		Functions\when( 'get_option' )->justReturn(
@@ -166,7 +166,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * An empty per-post meta value means "inherit" — per-type limit wins.
+	 * Treats an empty per-post meta value as "inherit" — per-type limit wins.
 	 */
 	public function test_empty_per_post_meta_inherits_per_type_limit(): void {
 		Functions\when( 'get_option' )->justReturn(
@@ -184,7 +184,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * Per-post override clamps to -1 at minimum.
+	 * Clamps per-post override to -1 at minimum.
 	 */
 	public function test_per_post_override_clamps_below_minus_one(): void {
 		Functions\when( 'get_post_meta' )->justReturn( '-99' );
@@ -193,7 +193,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * Registering hooks the filter on wp_revisions_to_keep.
+	 * Verifies register() hooks the filter on wp_revisions_to_keep.
 	 */
 	public function test_register_hooks_the_filter(): void {
 		Functions\expect( 'add_filter' )

@@ -25,7 +25,7 @@ final class ContentGeneratorTest extends TestCase {
 	}
 
 	/**
-	 * Same seed + same call sequence produces the same title.
+	 * Asserts the same seed plus same call sequence produces the same title.
 	 */
 	public function test_title_is_deterministic_for_same_seed(): void {
 		$generator = new ContentGenerator();
@@ -37,7 +37,7 @@ final class ContentGeneratorTest extends TestCase {
 	}
 
 	/**
-	 * Body has at least two paragraphs (joined by blank lines).
+	 * Asserts body has at least two paragraphs (joined by blank lines).
 	 */
 	public function test_body_has_at_least_two_paragraphs(): void {
 		$generator = new ContentGenerator();
@@ -48,7 +48,7 @@ final class ContentGeneratorTest extends TestCase {
 	}
 
 	/**
-	 * The post() method returns the shape wp_insert_post() expects.
+	 * Asserts the post() method returns the shape wp_insert_post() expects.
 	 */
 	public function test_post_returns_wp_insert_post_shape(): void {
 		$generator = new ContentGenerator();

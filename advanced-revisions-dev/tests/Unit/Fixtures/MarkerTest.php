@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 final class MarkerTest extends TestCase {
 
 	/**
-	 * Author login uses the configured prefix with a 1-based index.
+	 * Asserts author login uses the configured prefix with a 1-based index.
 	 */
 	public function test_author_login_uses_one_indexed_numbers(): void {
 		self::assertSame( 'ar_test_author_1', Marker::author_login( 1 ) );
@@ -21,7 +21,7 @@ final class MarkerTest extends TestCase {
 	}
 
 	/**
-	 * Author email uses the example.tld safe domain.
+	 * Asserts author email uses the example.tld safe domain.
 	 */
 	public function test_author_email_uses_example_tld(): void {
 		self::assertSame(
@@ -31,7 +31,7 @@ final class MarkerTest extends TestCase {
 	}
 
 	/**
-	 * Post and revision marker keys are distinct so resetters don't cross-delete.
+	 * Asserts post and revision marker keys are distinct so resetters don't cross-delete.
 	 */
 	public function test_seeded_post_meta_key_differs_from_revision(): void {
 		self::assertNotSame( Marker::SEEDED_POST, Marker::SEEDED_REVISION );

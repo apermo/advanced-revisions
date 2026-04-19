@@ -65,7 +65,7 @@ final class ProtectionServiceTest extends TestCase {
 	}
 
 	/**
-	 * Empty input returns empty array without hitting the DB.
+	 * Asserts empty input returns an empty array without hitting the DB.
 	 */
 	public function test_filter_deletable_returns_empty_for_empty_input(): void {
 		self::assertSame( [], ProtectionService::filter_deletable( [] ) );
@@ -125,7 +125,7 @@ final class ProtectionServiceTest extends TestCase {
 	}
 
 	/**
-	 * A revision with a mix of protected and unprotected tags stays protected.
+	 * Asserts a revision with a mix of protected and unprotected tags stays protected.
 	 */
 	public function test_filter_deletable_respects_any_protected_tag(): void {
 		$this->stub_tags(
@@ -142,7 +142,7 @@ final class ProtectionServiceTest extends TestCase {
 	}
 
 	/**
-	 * Count helper reports how many IDs are protected (useful for UI).
+	 * Asserts the count helper reports how many IDs are protected (useful for UI).
 	 */
 	public function test_count_protected_reports_how_many_ids_are_protected(): void {
 		$this->stub_tags(
@@ -162,7 +162,7 @@ final class ProtectionServiceTest extends TestCase {
 	}
 
 	/**
-	 * Count helper uses the same taxonomy constant as the service itself.
+	 * Asserts the count helper uses the same taxonomy constant as the service itself.
 	 */
 	public function test_taxonomy_constant_matches_registrar(): void {
 		self::assertSame( TaxonomyRegistrar::TAXONOMY, 'revision_tag' );

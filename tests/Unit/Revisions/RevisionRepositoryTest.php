@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 
 /**
- * Unit tests for RevisionRepository. We stub a tiny $wpdb double so the
+ * Covers RevisionRepository with unit tests. Stubs a tiny $wpdb double so the
  * SQL-execution paths are covered without a real DB.
  */
 final class RevisionRepositoryTest extends TestCase {
@@ -33,7 +33,7 @@ final class RevisionRepositoryTest extends TestCase {
 	}
 
 	/**
-	 * The paginated helper returns an empty array when $wpdb is not initialized.
+	 * Asserts the paginated helper returns an empty array when $wpdb is not initialized.
 	 */
 	public function test_paginated_returns_empty_without_wpdb(): void {
 		unset( $GLOBALS['wpdb'] );
@@ -42,7 +42,7 @@ final class RevisionRepositoryTest extends TestCase {
 	}
 
 	/**
-	 * The paginated helper maps $wpdb->get_results output into the overview row shape.
+	 * Asserts the paginated helper maps $wpdb->get_results output into the overview row shape.
 	 */
 	public function test_paginated_maps_db_rows_to_overview_shape(): void {
 		// phpcs:ignore SlevomatCodingStandard.PHP.ForbiddenClasses.ForbiddenClass
@@ -68,7 +68,7 @@ final class RevisionRepositoryTest extends TestCase {
 	}
 
 	/**
-	 * The paginated helper clamps per_page into a safe range.
+	 * Asserts the paginated helper clamps per_page into a safe range.
 	 */
 	public function test_paginated_clamps_per_page(): void {
 		$GLOBALS['wpdb']->next_results = [];
@@ -78,7 +78,7 @@ final class RevisionRepositoryTest extends TestCase {
 	}
 
 	/**
-	 * The total_parents helper returns 0 when $wpdb is not available.
+	 * Asserts the total_parents helper returns 0 when $wpdb is not available.
 	 */
 	public function test_total_parents_returns_zero_without_wpdb(): void {
 		unset( $GLOBALS['wpdb'] );
@@ -87,7 +87,7 @@ final class RevisionRepositoryTest extends TestCase {
 	}
 
 	/**
-	 * The total_parents helper returns the DB count as int.
+	 * Asserts the total_parents helper returns the DB count as int.
 	 */
 	public function test_total_parents_returns_db_count(): void {
 		$GLOBALS['wpdb']->next_var = 17;
@@ -96,14 +96,14 @@ final class RevisionRepositoryTest extends TestCase {
 	}
 
 	/**
-	 * The revision_ids_for_parents helper short-circuits on empty input.
+	 * Asserts the revision_ids_for_parents helper short-circuits on empty input.
 	 */
 	public function test_revision_ids_for_parents_returns_empty_for_empty_input(): void {
 		self::assertSame( [], ( new RevisionRepository() )->revision_ids_for_parents( [] ) );
 	}
 
 	/**
-	 * The revision_ids_for_parents helper returns an int list from $wpdb->get_col.
+	 * Asserts the revision_ids_for_parents helper returns an int list from $wpdb->get_col.
 	 */
 	public function test_revision_ids_for_parents_casts_db_values_to_int(): void {
 		$GLOBALS['wpdb']->next_col = [ '101', '102', 103 ];
@@ -114,7 +114,7 @@ final class RevisionRepositoryTest extends TestCase {
 	}
 
 	/**
-	 * Missing $wpdb on revision_ids_for_parents returns an empty list.
+	 * Asserts a missing $wpdb on revision_ids_for_parents returns an empty list.
 	 */
 	public function test_revision_ids_for_parents_returns_empty_without_wpdb(): void {
 		unset( $GLOBALS['wpdb'] );
