@@ -1,0 +1,160 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Apermo\AdvancedRevisionsDev\Fixtures;
+
+use WP_Query;
+use WP_User;
+
+/**
+ * Inserts seeded content into WordPress. Everything this class creates carries
+ * a marker meta key so {@see self::reset()} can delete exactly what was seeded
+ * without touching real editorial content.
+ */
+final class ContentSeeder {
+
+	/**
+	 * Default target post types when none are specified.
+	 *
+	 * @var list<string>
+	 */
+	public const DEFAULT_POST_TYPES = [
+		'ar_test_article',
+		'ar_test_page',
+		'ar_test_product',
+		'ar_test_note',
+		'ar_test_private',
+	];
+
+	/**
+	 * Allowed post_status values per --status-mix preset.
+	 *
+	 * @var array<string, list<string>>
+	 */
+	private const STATUS_PRESETS = [
+		'publish' => [ 'publish' ],
+		'mixed'   => [ 'publish', 'draft', 'pending', 'private' ],
+		'all'     => [ 'publish', 'draft', 'pending', 'private', 'future' ],
+	];
+
+	/**
+	 * Inject the shared ContentGenerator.
+	 *
+	 * @param ContentGenerator $generator Used to produce wp_insert_post shapes.
+	 */
+	public function __construct(
+		private readonly ContentGenerator $generator,
+	) {
+	}
+
+	/**
+	 * Run a seed pass. Returns a per-post-type count of inserted posts.
+	 *
+	 * @param array<string, mixed> $options Shape: count:int, seed:int, authors:int, date_spread:int, status_mix:string, post_types:list<string>.
+	 * @return array<string, int>
+	 */
+	public function seed( array $options ): array {
+		$rng        = new Randomizer( $options['seed'] );
+		$author_ids = $this->ensure_authors( $options['authors'] );
+		$statuses   = self::STATUS_PRESETS[ $options['status_mix'] ] ?? self::STATUS_PRESETS['publish'];
+		$now_gmt    = \time();
+		$spread     = \max( 1, $options['date_spread'] ) * 86_400;
+
+		$totals = [];
+		foreach ( $options['post_types'] as $post_type ) {
+			$totals[ $post_type ] = 0;
+			for ( $i = 0; $i < $options['count']; $i++ ) {
+				$author_id = $author_ids[ $rng->int_between( 0, \count( $author_ids ) - 1 ) ];
+				$status    = (string) $rng->pick( $statuses );
+				$offset    = $rng->int_between( 0, $spread );
+				$date_gmt  = \gmdate( 'Y-m-d H:i:s', $now_gmt - $offset );
+
+				$post_data = $this->generator->post( $rng, $post_type, $author_id, $status, $date_gmt );
+				$post_id   = wp_insert_post( $post_data, true );
+
+				// @phpstan-ignore-next-line smaller.alwaysFalse -- wp_insert_post can return 0 on silent failure; PHPStan's stub narrows too aggressively.
+				if ( is_wp_error( $post_id ) || $post_id <= 0 ) {
+					continue;
+				}
+
+				update_post_meta( $post_id, Marker::SEEDED_POST, Marker::YES );
+				$totals[ $post_type ]++;
+			}
+		}
+
+		return $totals;
+	}
+
+	/**
+	 * Delete every post (and its revisions) that was created by the seeder.
+	 *
+	 * @return int Number of parent posts deleted.
+	 */
+	public function reset(): int {
+		$query = new WP_Query(
+			// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- WP_Query args are a WP API shape.
+			[
+				'post_type'      => 'any',
+				'post_status'    => 'any',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'meta_key'       => Marker::SEEDED_POST, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value'     => Marker::YES, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				'no_found_rows'  => true,
+			],
+		);
+
+		$deleted = 0;
+		foreach ( $query->posts as $post_id ) {
+			if ( ! \is_int( $post_id ) ) {
+				continue;
+			}
+			// phpcs:ignore Apermo.WordPress.RequireWpErrorHandling.Unchecked -- wp_delete_post() is typed WP_Post|false|null, not WP_Error.
+			$result = wp_delete_post( $post_id, true );
+			if ( $result === false || $result === null ) {
+				continue;
+			}
+			$deleted++;
+		}
+
+		return $deleted;
+	}
+
+	/**
+	 * Ensure N test authors exist. Creates any that are missing.
+	 *
+	 * @param int $count Number of authors to ensure.
+	 * @return list<int>
+	 */
+	private function ensure_authors( int $count ): array {
+		$ids = [];
+		for ( $i = 1; $i <= $count; $i++ ) {
+			$login    = Marker::author_login( $i );
+			$existing = get_user_by( 'login', $login );
+			if ( $existing instanceof WP_User ) {
+				$ids[] = $existing->ID;
+				continue;
+			}
+
+			$new_id = wp_insert_user(
+				// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- wp_insert_user args are a WP API shape.
+				[
+					'user_login' => $login,
+					'user_email' => Marker::author_email( $i ),
+					'user_pass'  => wp_generate_password( 20 ),
+					'role'       => 'editor',
+					'first_name' => 'Test',
+					'last_name'  => 'Author ' . $i,
+				],
+			);
+
+			if ( is_wp_error( $new_id ) || $new_id <= 0 ) {
+				continue;
+			}
+			$ids[] = $new_id;
+		}
+
+		return $ids;
+	}
+}

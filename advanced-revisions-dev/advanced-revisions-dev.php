@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Apermo\AdvancedRevisionsDev;
 
+use WP_CLI;
+
 \defined( 'ABSPATH' ) || exit();
 
 \spl_autoload_register(
@@ -30,3 +32,7 @@ namespace Apermo\AdvancedRevisionsDev;
 );
 
 add_action( 'init', [ TestPostTypes::class, 'register' ] );
+
+if ( \defined( 'WP_CLI' ) && \WP_CLI ) {
+	WP_CLI::add_command( 'ar-fixtures', CLI\FixturesCommand::class );
+}
