@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Apermo\Advanced_Revisions\Tests\Integration;
+namespace Apermo\AdvancedRevisions\Tests\Integration;
 
-use Apermo\Advanced_Revisions\Plugin;
+use Apermo\AdvancedRevisions\Plugin;
 use WP_UnitTestCase;
 
 /**

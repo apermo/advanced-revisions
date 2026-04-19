@@ -14,7 +14,7 @@ Derived from [`apermo/template-wordpress`](https://github.com/apermo/template-wo
 ## Architecture
 
 - Main plugin file: `plugin.php`
-- PSR-4 root: `src/` → `Apermo\Advanced_Revisions\`
+- PSR-4 root: `src/` → `Apermo\AdvancedRevisions\`
 - Entry class: `src/Plugin.php` (lifecycle: `activate()`, `deactivate()`, `boot()`)
 - Uninstall hook: `uninstall.php`
 

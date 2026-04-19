@@ -24,13 +24,13 @@
 
     <!--
         Project prefix for global functions, hooks, constants,
-        and namespace roots. E.g. prefix "Advanced_Revisions" allows
-        namespace Advanced_Revisions\Admin but flags Other\Admin.
+        and namespace roots. E.g. prefix "AdvancedRevisions" allows
+        namespace AdvancedRevisions\Admin but flags Other\Admin.
     -->
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
         <properties>
             <property name="prefixes" type="array">
-                <element value="Apermo\Advanced_Revisions"/>
+                <element value="Apermo\AdvancedRevisions"/>
                 <element value="advanced_revisions"/>
             </property>
         </properties>
@@ -38,5 +38,5 @@
         <exclude-pattern>tests/bootstrap.php</exclude-pattern>
     </rule>
 
-    <config name="minimum_wp_version" value="6.2"/>
+    <config name="minimum_wp_version" value="6.4"/>
 </ruleset>

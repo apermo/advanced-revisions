@@ -23,12 +23,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Apermo\\Advanced_Revisions\\": "src/"
+            "Apermo\\AdvancedRevisions\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Apermo\\Advanced_Revisions\\Tests\\": "tests/"
+            "Apermo\\AdvancedRevisions\\Tests\\": "tests/"
         }
     },
     "scripts": {

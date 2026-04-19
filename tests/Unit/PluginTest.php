@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Apermo\Advanced_Revisions\Tests\Unit;
+namespace Apermo\AdvancedRevisions\Tests\Unit;
 
-use Apermo\Advanced_Revisions\Plugin;
+use Apermo\AdvancedRevisions\Plugin;
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;

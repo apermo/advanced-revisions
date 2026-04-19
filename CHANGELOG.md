@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial project scaffolding based on `apermo/template-wordpress`
-- PHP 8.1+ codebase with strict types, PSR-4 autoloading under `Apermo\Advanced_Revisions\`
+- PHP 8.1+ codebase with strict types, PSR-4 autoloading under `Apermo\AdvancedRevisions\`
 - Coding standards (`apermo/apermo-coding-standards`) and static analysis (PHPStan with WordPress rules)
 - PHPUnit test suites (unit + WordPress integration) and Playwright E2E scaffold
 - DDEV local development environment and GitHub Actions CI (lint, analyse, test, WP beta)
