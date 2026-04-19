@@ -173,7 +173,6 @@ final class OverviewPage {
 		echo esc_html__( 'Delete revisions for selected posts', 'advanced-revisions' );
 		echo '</button></p>';
 
-		// phpcs:ignore Apermo.WordPress.NoHardcodedTableNames.Found -- CSS class names on an HTML element, not SQL.
 		echo '<table class="wp-list-table widefat fixed striped">';
 		echo '<thead><tr>';
 		echo '<td class="manage-column column-cb check-column"><input type="checkbox" id="cb-select-all-1" /></td>';

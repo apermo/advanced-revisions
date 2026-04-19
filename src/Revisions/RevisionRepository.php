@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Apermo\AdvancedRevisions\Revisions;
 
 /**
- * Aggregation queries for the Tools → Revisions overview.
+ * Runs aggregation queries for the Tools → Revisions overview.
  *
  * Queries are raw SQL on $wpdb->posts; they're purpose-built aggregates
  * (COUNT / MIN) that WP_Query can't express cleanly. The overview caches
@@ -71,7 +71,6 @@ class RevisionRepository {
 
 		$result = [];
 		foreach ( $rows as $row_data ) {
-			// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- overview row shape.
 			$result[] = [
 				'id'         => (int) $row_data->ID,
 				'title'      => (string) $row_data->post_title,
@@ -85,7 +84,7 @@ class RevisionRepository {
 	}
 
 	/**
-	 * Total number of parent posts that have at least one revision — used for paginator.
+	 * Counts parent posts with at least one revision — used for paginator.
 	 */
 	public function total_parents(): int {
 		global $wpdb;

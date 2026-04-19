@@ -12,7 +12,7 @@ use Apermo\AdvancedRevisionsDev\Fixtures\RevisionSeeder;
 use WP_CLI;
 
 /**
- * WP-CLI commands for seeding dev fixtures.
+ * Registers WP-CLI commands for seeding dev fixtures.
  *
  * Registered under `wp ar-fixtures`. Methods map 1:1 to sub-commands.
  */
@@ -195,7 +195,7 @@ final class FixturesCommand {
 	}
 
 	/**
-	 * Convenience: reset revisions then content (reverse of creation order).
+	 * Resets revisions then content (reverse of creation order).
 	 *
 	 * ## EXAMPLES
 	 *
@@ -222,7 +222,7 @@ final class FixturesCommand {
 	}
 
 	/**
-	 * Look up IDs of seeded parent posts matching the configured post types.
+	 * Looks up IDs of seeded parent posts matching the configured post types.
 	 *
 	 * @param array<int, string> $post_types Post type slugs to include.
 	 * @return array<int, int>
@@ -233,7 +233,6 @@ final class FixturesCommand {
 		}
 
 		$ids = get_posts(
-			// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- get_posts args are a WP API shape.
 			[
 				'post_type'      => $post_types,
 				'post_status'    => 'any',
@@ -263,7 +262,11 @@ final class FixturesCommand {
 	 */
 	private function normalize_revisions_options( array $assoc_args ): array {
 		$post_types = ContentSeeder::DEFAULT_POST_TYPES;
-		if ( isset( $assoc_args['post-types'] ) && \is_string( $assoc_args['post-types'] ) && $assoc_args['post-types'] !== '' ) {
+		if (
+			isset( $assoc_args['post-types'] )
+			&& \is_string( $assoc_args['post-types'] )
+			&& $assoc_args['post-types'] !== ''
+		) {
 			$post_types = \array_values(
 				\array_filter(
 					\array_map( 'trim', \explode( ',', $assoc_args['post-types'] ) ),
@@ -272,7 +275,6 @@ final class FixturesCommand {
 			);
 		}
 
-		// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- options DTO mirroring CLI flags.
 		return [
 			'distribution'   => (string) ( $assoc_args['distribution'] ?? 'normal' ),
 			'seed'           => (int) ( $assoc_args['seed'] ?? 0 ),
@@ -298,7 +300,11 @@ final class FixturesCommand {
 	 */
 	private function normalize_content_options( array $assoc_args ): array {
 		$post_types = ContentSeeder::DEFAULT_POST_TYPES;
-		if ( isset( $assoc_args['post-types'] ) && \is_string( $assoc_args['post-types'] ) && $assoc_args['post-types'] !== '' ) {
+		if (
+			isset( $assoc_args['post-types'] )
+			&& \is_string( $assoc_args['post-types'] )
+			&& $assoc_args['post-types'] !== ''
+		) {
 			$post_types = \array_values(
 				\array_filter(
 					\array_map( 'trim', \explode( ',', $assoc_args['post-types'] ) ),
@@ -307,7 +313,6 @@ final class FixturesCommand {
 			);
 		}
 
-		// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- options shape is an internal DTO mirroring CLI flags.
 		return [
 			'count'       => (int) ( $assoc_args['count'] ?? 50 ),
 			'seed'        => (int) ( $assoc_args['seed'] ?? 0 ),

@@ -31,7 +31,7 @@ final class TestPostTypes {
 	}
 
 	/**
-	 * Post type definitions keyed by slug.
+	 * Returns post type definitions keyed by slug.
 	 *
 	 * @return array<string, array<string, mixed>>
 	 */
@@ -46,7 +46,7 @@ final class TestPostTypes {
 	}
 
 	/**
-	 * Flat public post type with full revision support.
+	 * Defines a flat public post type with full revision support.
 	 *
 	 * @return array<string, mixed>
 	 */
@@ -58,7 +58,7 @@ final class TestPostTypes {
 	}
 
 	/**
-	 * Hierarchical public post type — exercises parent/child admin UX.
+	 * Defines a hierarchical public post type that exercises parent/child admin UX.
 	 *
 	 * @return array<string, mixed>
 	 */
@@ -70,7 +70,7 @@ final class TestPostTypes {
 	}
 
 	/**
-	 * Post type with revisioned custom meta for exercising meta-revisioning (#9).
+	 * Defines a post type with revisioned custom meta for exercising meta-revisioning (#9).
 	 *
 	 * @return array<string, mixed>
 	 */
@@ -82,7 +82,7 @@ final class TestPostTypes {
 	}
 
 	/**
-	 * Post type with revisions explicitly disabled — negative coverage.
+	 * Defines a post type with revisions explicitly disabled — negative coverage.
 	 *
 	 * @return array<string, mixed>
 	 */
@@ -94,7 +94,7 @@ final class TestPostTypes {
 	}
 
 	/**
-	 * Non-public post type — exercises capability gating.
+	 * Defines a non-public post type that exercises capability gating.
 	 *
 	 * @return array<string, mixed>
 	 */
@@ -107,7 +107,7 @@ final class TestPostTypes {
 	}
 
 	/**
-	 * Shared defaults applied to every test post type.
+	 * Returns shared defaults applied to every test post type.
 	 *
 	 * @param string $name            Plural label.
 	 * @param string $singular        Singular label.
@@ -116,7 +116,6 @@ final class TestPostTypes {
 	 * @return array<string, mixed>
 	 */
 	private static function base( string $name, string $singular, string $capability_type, bool $is_public = true ): array {
-		// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- register_post_type args are a WP API shape, not a candidate for a typed object.
 		return [
 			'labels'          => [
 				'name'          => $name,

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Apermo\AdvancedRevisionsDev\Fixtures;
 
-// phpcs:disable Apermo.WordPress.NoHardcodedTableNames.Found -- the vocabulary strings below are English content, not SQL.
-
 /**
  * Produces plausible-looking post content arrays deterministically from a
  * Randomizer seed. Output is used by ContentSeeder to feed wp_insert_post().
@@ -53,7 +51,6 @@ final class ContentGenerator {
 	public function post( Randomizer $rng, string $post_type, int $author_id, string $post_status, string $post_date_gmt ): array {
 		$title = $this->title( $rng );
 
-		// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- wp_insert_post args are a WP API shape.
 		return [
 			'post_type'     => $post_type,
 			'post_status'   => $post_status,
@@ -106,7 +103,7 @@ final class ContentGenerator {
 	}
 
 	/**
-	 * Excerpt is the first 160 chars of body, or blank 20% of the time.
+	 * Returns the first 160 chars of body as the excerpt, or blank 20% of the time.
 	 *
 	 * @param Randomizer $rng Deterministic PRNG.
 	 */

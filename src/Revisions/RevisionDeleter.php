@@ -51,7 +51,6 @@ final class RevisionDeleter {
 
 		$deleted = 0;
 		foreach ( $deletable as $revision_id ) {
-			// phpcs:ignore Apermo.WordPress.RequireWpErrorHandling.Unchecked -- wp_delete_post_revision typed without WP_Error.
 			$result = wp_delete_post_revision( $revision_id );
 			if ( $result === false || $result === null ) {
 				continue;

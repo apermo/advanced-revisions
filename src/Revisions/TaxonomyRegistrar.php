@@ -32,7 +32,6 @@ final class TaxonomyRegistrar {
 		register_taxonomy(
 			self::TAXONOMY,
 			'revision',
-			// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- register_taxonomy args are a WP API shape.
 			[
 				'public'            => false,
 				'show_ui'           => true,
@@ -80,13 +79,11 @@ final class TaxonomyRegistrar {
 	}
 
 	/**
-	 * Human-readable labels for the taxonomy.
+	 * Returns human-readable labels for the taxonomy.
 	 *
 	 * @return array<string, string>
 	 */
 	private static function labels(): array {
-		// phpcs:disable Apermo.WordPress.NoHardcodedTableNames.Found -- these are UI labels, not SQL.
-		// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- taxonomy labels are a WP API shape.
 		return [
 			'name'          => __( 'Revision Tags', 'advanced-revisions' ),
 			'singular_name' => __( 'Revision Tag', 'advanced-revisions' ),

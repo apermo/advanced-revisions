@@ -97,7 +97,6 @@ final class ContentSeeder {
 	 */
 	public function reset(): int {
 		$query = new WP_Query(
-			// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- WP_Query args are a WP API shape.
 			[
 				'post_type'      => 'any',
 				'post_status'    => 'any',
@@ -114,7 +113,6 @@ final class ContentSeeder {
 			if ( ! \is_int( $post_id ) ) {
 				continue;
 			}
-			// phpcs:ignore Apermo.WordPress.RequireWpErrorHandling.Unchecked -- wp_delete_post() is typed WP_Post|false|null, not WP_Error.
 			$result = wp_delete_post( $post_id, true );
 			if ( $result === false || $result === null ) {
 				continue;
@@ -142,7 +140,6 @@ final class ContentSeeder {
 			}
 
 			$new_id = wp_insert_user(
-				// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- wp_insert_user args are a WP API shape.
 				[
 					'user_login' => $login,
 					'user_email' => Marker::author_email( $i ),

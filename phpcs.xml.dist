@@ -40,11 +40,6 @@
         <exclude-pattern>tests/bootstrap.php</exclude-pattern>
     </rule>
 
-    <!-- Test fixtures legitimately need many-key arrays (options, mock payloads). -->
-    <rule ref="Apermo.DataStructures.ArrayComplexity.TooManyKeys">
-        <exclude-pattern>*/tests/*</exclude-pattern>
-    </rule>
-
     <rule ref="Apermo.NamingConventions.MinimumVariableNameLength">
         <properties>
             <property name="allowedShortNames" type="array">

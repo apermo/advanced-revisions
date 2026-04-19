@@ -147,7 +147,6 @@ final class RevisionSeeder {
 	 */
 	public function reset(): int {
 		$query = new WP_Query(
-			// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- WP_Query args are a WP API shape.
 			[
 				'post_type'      => [ 'revision' ],
 				'post_status'    => 'inherit',
@@ -164,7 +163,6 @@ final class RevisionSeeder {
 			if ( ! \is_int( $revision_id ) ) {
 				continue;
 			}
-			// phpcs:ignore Apermo.WordPress.RequireWpErrorHandling.Unchecked -- wp_delete_post_revision typed without WP_Error.
 			$result = wp_delete_post_revision( $revision_id );
 			if ( $result === false || $result === null ) {
 				continue;
@@ -192,7 +190,6 @@ final class RevisionSeeder {
 		$suffix   = $is_autosave ? '-autosave-v' : '-revision-v';
 
 		$row_id = wp_insert_post(
-			// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- wp_insert_post args are a WP API shape.
 			[
 				'post_type'     => 'revision',
 				'post_parent'   => $parent_post->ID,
@@ -228,7 +225,6 @@ final class RevisionSeeder {
 		$date_gmt       = $this->historical_date( $rng, $spread_days, $now_gmt );
 
 		$row_id = wp_insert_post(
-			// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- wp_insert_post args are a WP API shape.
 			[
 				'post_type'     => 'revision',
 				'post_parent'   => $fake_parent_id,

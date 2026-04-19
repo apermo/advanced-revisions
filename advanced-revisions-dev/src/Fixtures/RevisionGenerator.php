@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Apermo\AdvancedRevisionsDev\Fixtures;
 
-// phpcs:disable Apermo.WordPress.NoHardcodedTableNames.Found -- vocabulary strings below are English, not SQL.
-
 /**
  * Mutates post bodies to produce visible diffs between revisions.
  *
