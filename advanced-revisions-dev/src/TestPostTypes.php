@@ -12,7 +12,7 @@ namespace Apermo\AdvancedRevisionsDev;
 final class TestPostTypes {
 
 	/**
-	 * Register all test post types and their revisioned meta keys.
+	 * Registers all test post types and their revisioned meta keys.
 	 */
 	public static function register(): void {
 		foreach ( self::definitions() as $slug => $args ) {

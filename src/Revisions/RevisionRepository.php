@@ -19,7 +19,7 @@ class RevisionRepository {
 	public const DEFAULT_PER_PAGE = 20;
 
 	/**
-	 * Return paginated rows for the overview table.
+	 * Returns paginated rows for the overview table.
 	 *
 	 * Each row: parent post ID, title, type, author ID, revision count,
 	 * oldest revision GMT timestamp.
@@ -99,7 +99,7 @@ class RevisionRepository {
 	}
 
 	/**
-	 * Return every revision ID belonging to the given parent post IDs.
+	 * Returns every revision ID belonging to the given parent post IDs.
 	 *
 	 * @param array<int, int> $parent_ids Parent post IDs.
 	 * @return array<int, int> Revision IDs.

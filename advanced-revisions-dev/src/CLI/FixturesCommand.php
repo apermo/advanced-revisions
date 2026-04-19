@@ -19,7 +19,7 @@ use WP_CLI;
 final class FixturesCommand {
 
 	/**
-	 * Seed dummy posts across the configured post types.
+	 * Seeds dummy posts across the configured post types.
 	 *
 	 * ## OPTIONS
 	 *
@@ -86,7 +86,7 @@ final class FixturesCommand {
 	}
 
 	/**
-	 * Delete everything the seeder has created (marker-meta match).
+	 * Deletes everything the seeder has created (marker-meta match).
 	 *
 	 * ## EXAMPLES
 	 *
@@ -105,7 +105,7 @@ final class FixturesCommand {
 	}
 
 	/**
-	 * Seed revisions (and optional autosaves + orphans) on top of seeded posts.
+	 * Seeds revisions (and optional autosaves + orphans) on top of seeded posts.
 	 *
 	 * ## OPTIONS
 	 *
@@ -176,7 +176,7 @@ final class FixturesCommand {
 	}
 
 	/**
-	 * Delete every revision/autosave/orphan this seeder created.
+	 * Deletes every revision/autosave/orphan this seeder created.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -249,7 +249,7 @@ final class FixturesCommand {
 	}
 
 	/**
-	 * Parse + default the revisions command flags.
+	 * Parses + default the revisions command flags.
 	 *
 	 * @param array<string, mixed> $assoc_args Raw flags from WP-CLI.
 	 * @return array{
@@ -284,7 +284,7 @@ final class FixturesCommand {
 	}
 
 	/**
-	 * Parse + defaulted options for the content command.
+	 * Parses + defaulted options for the content command.
 	 *
 	 * @param array<string, mixed> $assoc_args Raw flags from WP-CLI.
 	 * @return array{

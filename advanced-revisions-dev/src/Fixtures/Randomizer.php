@@ -18,7 +18,7 @@ namespace Apermo\AdvancedRevisionsDev\Fixtures;
 final class Randomizer {
 
 	/**
-	 * Seed the global PRNG.
+	 * Seeds the global PRNG.
 	 *
 	 * @param int $seed Non-zero seed; 0 means "do not seed" (use current global state).
 	 */
@@ -41,7 +41,7 @@ final class Randomizer {
 	}
 
 	/**
-	 * Pick one element from $choices. Returns null for an empty list.
+	 * Picks one element from $choices. Returns null for an empty list.
 	 *
 	 * @param array<int, mixed> $choices Items to pick from.
 	 */

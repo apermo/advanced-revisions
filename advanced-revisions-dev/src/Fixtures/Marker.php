@@ -18,7 +18,7 @@ final class Marker {
 	public const AUTHOR_EMAIL_DOMAIN = 'example.tld';
 
 	/**
-	 * Build the login name for test author N (1-indexed).
+	 * Builds the login name for test author N (1-indexed).
 	 *
 	 * @param int $index 1-based author index.
 	 */
@@ -27,7 +27,7 @@ final class Marker {
 	}
 
 	/**
-	 * Build a deterministic email for test author N.
+	 * Builds a deterministic email for test author N.
 	 *
 	 * @param int $index 1-based author index.
 	 */

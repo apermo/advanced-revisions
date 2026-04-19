@@ -40,7 +40,7 @@ final class RevisionSeederTest extends TestCase {
 	private int $next_id = 9001;
 
 	/**
-	 * Set up Brain Monkey and default WP function stubs.
+	 * Sets up Brain Monkey and default WP function stubs.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -84,7 +84,7 @@ final class RevisionSeederTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey.
+	 * Tears down Brain Monkey.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();

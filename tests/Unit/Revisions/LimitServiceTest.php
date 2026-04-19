@@ -16,7 +16,7 @@ use WP_Post;
 final class LimitServiceTest extends TestCase {
 
 	/**
-	 * Set up Brain Monkey.
+	 * Sets up Brain Monkey.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -27,7 +27,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey.
+	 * Tears down Brain Monkey.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();
@@ -35,7 +35,7 @@ final class LimitServiceTest extends TestCase {
 	}
 
 	/**
-	 * Build a WP_Post stub with the given post_type.
+	 * Builds a WP_Post stub with the given post_type.
 	 *
 	 * @param string $post_type Post type slug.
 	 */

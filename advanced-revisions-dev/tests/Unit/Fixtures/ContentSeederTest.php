@@ -46,7 +46,7 @@ final class ContentSeederTest extends TestCase {
 	private int $next_user_id = 100;
 
 	/**
-	 * Set up Brain Monkey and default WP function stubs for every test.
+	 * Sets up Brain Monkey and default WP function stubs for every test.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -89,7 +89,7 @@ final class ContentSeederTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey.
+	 * Tears down Brain Monkey.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();

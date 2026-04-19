@@ -29,7 +29,7 @@ final class TestPostTypesTest extends TestCase {
 	private array $meta = [];
 
 	/**
-	 * Set up Brain Monkey and default function stubs.
+	 * Sets up Brain Monkey and default function stubs.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -55,7 +55,7 @@ final class TestPostTypesTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey.
+	 * Tears down Brain Monkey.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();

@@ -27,7 +27,7 @@ final class RevisionGenerator {
 	];
 
 	/**
-	 * Append a short mutation marker to the body.
+	 * Appends a short mutation marker to the body.
 	 *
 	 * @param Randomizer $rng      Deterministic PRNG.
 	 * @param string     $original Existing post body.
@@ -41,7 +41,7 @@ final class RevisionGenerator {
 	}
 
 	/**
-	 * Mutate a title with a small suffix. Most revisions keep the same title;
+	 * Mutates a title with a small suffix. Most revisions keep the same title;
 	 * ~10% of the time we tweak it so the diff covers title changes too.
 	 *
 	 * @param Randomizer $rng      Deterministic PRNG.

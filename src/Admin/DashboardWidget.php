@@ -23,14 +23,14 @@ final class DashboardWidget {
 	public const TTL = 3600;
 
 	/**
-	 * Register on the dashboard setup hook.
+	 * Registers on the dashboard setup hook.
 	 */
 	public static function register(): void {
 		add_action( 'wp_dashboard_setup', [ self::class, 'add_widget' ] );
 	}
 
 	/**
-	 * Add the widget to the dashboard — gated by capability.
+	 * Adds the widget to the dashboard — gated by capability.
 	 */
 	public static function add_widget(): void {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
@@ -44,7 +44,7 @@ final class DashboardWidget {
 	}
 
 	/**
-	 * Render the widget body.
+	 * Renders the widget body.
 	 */
 	public static function render(): void {
 		$stats = self::stats();
@@ -94,7 +94,7 @@ final class DashboardWidget {
 	}
 
 	/**
-	 * Return cached stats, computing + storing them if the transient is empty.
+	 * Returns cached stats, computing + storing them if the transient is empty.
 	 *
 	 * @return array{total:int, est_bytes:int, top:array<int, array{title:string, count:int}>}
 	 */
@@ -114,14 +114,14 @@ final class DashboardWidget {
 	}
 
 	/**
-	 * Flush the cached stats — call after a cleanup run so numbers refresh.
+	 * Flushes the cached stats — call after a cleanup run so numbers refresh.
 	 */
 	public static function flush(): void {
 		delete_transient( self::TRANSIENT_KEY );
 	}
 
 	/**
-	 * Run the aggregation queries.
+	 * Runs the aggregation queries.
 	 *
 	 * @return array{total:int, est_bytes:int, top:array<int, array{title:string, count:int}>}
 	 */

@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class PluginTest extends TestCase {
 
 	/**
-	 * Set up Brain Monkey.
+	 * Sets up Brain Monkey.
 	 *
 	 * @return void
 	 */
@@ -26,7 +26,7 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey.
+	 * Tears down Brain Monkey.
 	 *
 	 * @return void
 	 */

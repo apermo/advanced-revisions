@@ -39,7 +39,7 @@ final class ContentSeeder {
 	];
 
 	/**
-	 * Inject the shared ContentGenerator.
+	 * Injects the shared ContentGenerator.
 	 *
 	 * @param ContentGenerator $generator Used to produce wp_insert_post shapes.
 	 */
@@ -49,7 +49,7 @@ final class ContentSeeder {
 	}
 
 	/**
-	 * Run a seed pass. Returns a per-post-type count of inserted posts.
+	 * Runs a seed pass. Returns a per-post-type count of inserted posts.
 	 *
 	 * @param array<string, mixed> $options Shape: count:int, seed:int, authors:int, date_spread:int, status_mix:string, post_types:list<string>.
 	 * @return array<string, int>
@@ -92,7 +92,7 @@ final class ContentSeeder {
 	}
 
 	/**
-	 * Delete every post (and its revisions) that was created by the seeder.
+	 * Deletes every post (and its revisions) that was created by the seeder.
 	 *
 	 * @return int Number of parent posts deleted.
 	 */
@@ -127,7 +127,7 @@ final class ContentSeeder {
 	}
 
 	/**
-	 * Ensure N test authors exist. Creates any that are missing.
+	 * Ensures N test authors exist. Creates any that are missing.
 	 *
 	 * @param int $count Number of authors to ensure.
 	 * @return list<int>

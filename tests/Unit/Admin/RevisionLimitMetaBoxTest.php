@@ -31,7 +31,7 @@ final class RevisionLimitMetaBoxTest extends TestCase {
 	private array $deleted_meta = [];
 
 	/**
-	 * Set up Brain Monkey and default WP function stubs.
+	 * Sets up Brain Monkey and default WP function stubs.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -68,7 +68,7 @@ final class RevisionLimitMetaBoxTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey.
+	 * Tears down Brain Monkey.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();

@@ -21,7 +21,7 @@ final class OverviewPage {
 	public const BULK_FIELD   = 'ar_bulk_delete';
 
 	/**
-	 * Wire the admin-menu and request-handling hooks.
+	 * Wires the admin-menu and request-handling hooks.
 	 */
 	public static function register(): void {
 		add_action( 'admin_menu', [ self::class, 'add_page' ] );
@@ -29,7 +29,7 @@ final class OverviewPage {
 	}
 
 	/**
-	 * Register the page under Tools.
+	 * Registers the page under Tools.
 	 */
 	public static function add_page(): void {
 		add_management_page(
@@ -42,7 +42,7 @@ final class OverviewPage {
 	}
 
 	/**
-	 * Render the overview table.
+	 * Renders the overview table.
 	 */
 	public static function render(): void {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
@@ -74,7 +74,7 @@ final class OverviewPage {
 	}
 
 	/**
-	 * Handle the bulk-delete POST submission from the overview form.
+	 * Handles the bulk-delete POST submission from the overview form.
 	 */
 	public static function handle_bulk_post(): void {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
@@ -112,7 +112,7 @@ final class OverviewPage {
 	}
 
 	/**
-	 * Parse 1-based page number from the query string, defaulting to 1.
+	 * Parses 1-based page number from the query string, defaulting to 1.
 	 */
 	private static function current_page(): int {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only pagination parameter.
@@ -123,7 +123,7 @@ final class OverviewPage {
 	}
 
 	/**
-	 * Render completion notices after a bulk action redirects back.
+	 * Renders completion notices after a bulk action redirects back.
 	 */
 	private static function render_notices(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- notice state parsed from query args after redirect.
@@ -158,7 +158,7 @@ final class OverviewPage {
 	}
 
 	/**
-	 * Render the overview form body.
+	 * Renders the overview form body.
 	 *
 	 * @param array<int, array<string, mixed>> $rows  Overview rows from RevisionRepository.
 	 * @param int                              $page  Current page (1-based).
@@ -198,7 +198,7 @@ final class OverviewPage {
 	}
 
 	/**
-	 * Render one row of the table.
+	 * Renders one row of the table.
 	 *
 	 * @param array<string, mixed> $row_data One row from RevisionRepository::paginated().
 	 */
@@ -232,7 +232,7 @@ final class OverviewPage {
 	}
 
 	/**
-	 * Render prev/next pagination links.
+	 * Renders prev/next pagination links.
 	 *
 	 * @param int $page        Current 1-based page number.
 	 * @param int $total_pages Total pages available.
@@ -258,7 +258,7 @@ final class OverviewPage {
 	}
 
 	/**
-	 * Build an absolute URL to the overview page with extra query args.
+	 * Builds an absolute URL to the overview page with extra query args.
 	 *
 	 * @param array<string, string> $extra Additional query args.
 	 */
@@ -268,7 +268,7 @@ final class OverviewPage {
 	}
 
 	/**
-	 * Parse the selected parent post IDs from $_POST['ar_parent_ids'].
+	 * Parses the selected parent post IDs from $_POST['ar_parent_ids'].
 	 *
 	 * @return array<int, int>
 	 */

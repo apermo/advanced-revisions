@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 final class DashboardWidgetTest extends TestCase {
 
 	/**
-	 * Set up Brain Monkey and stubs.
+	 * Sets up Brain Monkey and stubs.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -23,7 +23,7 @@ final class DashboardWidgetTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey.
+	 * Tears down Brain Monkey.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();

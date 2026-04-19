@@ -22,7 +22,7 @@ final class RevisionLimitMetaBox {
 	public const NONCE_NAME = 'advanced_revisions_override_nonce';
 
 	/**
-	 * Register the add/save hooks and expose the meta to REST.
+	 * Registers the add/save hooks and expose the meta to REST.
 	 */
 	public static function register(): void {
 		add_action( 'add_meta_boxes', [ self::class, 'add_meta_box' ] );
@@ -31,7 +31,7 @@ final class RevisionLimitMetaBox {
 	}
 
 	/**
-	 * Expose the override meta to REST so block-editor clients can manage it.
+	 * Exposes the override meta to REST so block-editor clients can manage it.
 	 */
 	public static function register_post_meta(): void {
 		foreach ( self::revisable_post_types() as $post_type ) {
@@ -52,7 +52,7 @@ final class RevisionLimitMetaBox {
 	}
 
 	/**
-	 * Add the meta box to every revision-supporting public post type.
+	 * Adds the meta box to every revision-supporting public post type.
 	 */
 	public static function add_meta_box(): void {
 		foreach ( self::revisable_post_types() as $post_type ) {
@@ -68,7 +68,7 @@ final class RevisionLimitMetaBox {
 	}
 
 	/**
-	 * Render the meta box body.
+	 * Renders the meta box body.
 	 *
 	 * @param WP_Post $post Current post.
 	 */
@@ -94,7 +94,7 @@ final class RevisionLimitMetaBox {
 	}
 
 	/**
-	 * Persist the submitted override on save_post.
+	 * Persists the submitted override on save_post.
 	 *
 	 * @param int     $post_id Post being saved.
 	 * @param WP_Post $post    Post object.

@@ -31,7 +31,7 @@ final class RevisionSeeder {
 	];
 
 	/**
-	 * Inject the shared RevisionGenerator.
+	 * Injects the shared RevisionGenerator.
 	 *
 	 * @param RevisionGenerator $generator Used to mutate post bodies/titles.
 	 */
@@ -41,7 +41,7 @@ final class RevisionSeeder {
 	}
 
 	/**
-	 * Run a revision-seed pass. Returns a stats map.
+	 * Runs a revision-seed pass. Returns a stats map.
 	 *
 	 * @param array<int, int>      $post_ids IDs of parent posts to revision.
 	 * @param array<string, mixed> $options  Shape: distribution:string, seed:int, spread_days:int, autosave_ratio:float, orphan_count:int.
@@ -76,7 +76,7 @@ final class RevisionSeeder {
 	}
 
 	/**
-	 * Seed revisions + autosaves for one parent post.
+	 * Seeds revisions + autosaves for one parent post.
 	 *
 	 * @param Randomizer     $rng         Deterministic PRNG.
 	 * @param int            $post_id     Parent post ID.
@@ -103,7 +103,7 @@ final class RevisionSeeder {
 	}
 
 	/**
-	 * Insert N revisions of a given variant and report how many succeeded.
+	 * Inserts N revisions of a given variant and report how many succeeded.
 	 *
 	 * @param Randomizer $rng         Deterministic PRNG.
 	 * @param WP_Post    $parent_post Parent post.
@@ -123,7 +123,7 @@ final class RevisionSeeder {
 	}
 
 	/**
-	 * Insert N orphan revisions.
+	 * Inserts N orphan revisions.
 	 *
 	 * @param Randomizer $rng         Deterministic PRNG.
 	 * @param int        $count       Number of orphans to insert.
@@ -141,7 +141,7 @@ final class RevisionSeeder {
 	}
 
 	/**
-	 * Delete every revision this seeder created (marker-meta match).
+	 * Deletes every revision this seeder created (marker-meta match).
 	 *
 	 * @return int Number of revisions deleted.
 	 */
@@ -176,7 +176,7 @@ final class RevisionSeeder {
 	}
 
 	/**
-	 * Insert one revision row (or autosave) for a given parent post.
+	 * Inserts one revision row (or autosave) for a given parent post.
 	 *
 	 * @param Randomizer $rng         Deterministic PRNG.
 	 * @param WP_Post    $parent_post Parent post.
@@ -217,7 +217,7 @@ final class RevisionSeeder {
 	}
 
 	/**
-	 * Insert an orphan revision — post_parent points to a non-existent ID.
+	 * Inserts an orphan revision — post_parent points to a non-existent ID.
 	 *
 	 * @param Randomizer $rng         Deterministic PRNG.
 	 * @param int        $spread_days Historical date window in days.
@@ -253,7 +253,7 @@ final class RevisionSeeder {
 	}
 
 	/**
-	 * Pick a GMT timestamp within the last $spread_days days, anchored on $now_gmt.
+	 * Picks a GMT timestamp within the last $spread_days days, anchored on $now_gmt.
 	 *
 	 * @param Randomizer $rng         Deterministic PRNG.
 	 * @param int        $spread_days Window size in days.

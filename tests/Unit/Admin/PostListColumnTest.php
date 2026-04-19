@@ -18,7 +18,7 @@ use WP_Post;
 final class PostListColumnTest extends TestCase {
 
 	/**
-	 * Set up Brain Monkey + reset the per-request cache.
+	 * Sets up Brain Monkey + reset the per-request cache.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -43,7 +43,7 @@ final class PostListColumnTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey + reset cache.
+	 * Tears down Brain Monkey + reset cache.
 	 */
 	protected function tearDown(): void {
 		PostListColumn::reset_cache();

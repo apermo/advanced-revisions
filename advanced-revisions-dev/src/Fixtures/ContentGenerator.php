@@ -41,7 +41,7 @@ final class ContentGenerator {
 	];
 
 	/**
-	 * Build one post data array (WP_Post shape, ready for wp_insert_post).
+	 * Builds one post data array (WP_Post shape, ready for wp_insert_post).
 	 *
 	 * @param Randomizer $rng           Deterministic PRNG.
 	 * @param string     $post_type     Target post type slug.
@@ -67,7 +67,7 @@ final class ContentGenerator {
 	}
 
 	/**
-	 * Generate a plausible post title.
+	 * Generates a plausible post title.
 	 *
 	 * @param Randomizer $rng Deterministic PRNG.
 	 */
@@ -84,7 +84,7 @@ final class ContentGenerator {
 	}
 
 	/**
-	 * Generate a short body composed of 2-4 vocabulary paragraphs.
+	 * Generates a short body composed of 2-4 vocabulary paragraphs.
 	 *
 	 * @param Randomizer $rng Deterministic PRNG.
 	 */
@@ -118,7 +118,7 @@ final class ContentGenerator {
 	}
 
 	/**
-	 * Pick a vocabulary word appropriate for slot position in a title template.
+	 * Picks a vocabulary word appropriate for slot position in a title template.
 	 * Slot 0 tends to be a verb/noun; later slots lean toward nouns/audiences.
 	 *
 	 * @param Randomizer $rng        Deterministic PRNG.

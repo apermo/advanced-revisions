@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 final class TaxonomyRegistrarTest extends TestCase {
 
 	/**
-	 * Set up Brain Monkey.
+	 * Sets up Brain Monkey.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -25,7 +25,7 @@ final class TaxonomyRegistrarTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey.
+	 * Tears down Brain Monkey.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();

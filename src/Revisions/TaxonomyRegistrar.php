@@ -18,7 +18,7 @@ final class TaxonomyRegistrar {
 	public const NOTE_META      = '_advanced_revisions_note';
 
 	/**
-	 * Register the taxonomy, term meta, and post meta on init.
+	 * Registers the taxonomy, term meta, and post meta on init.
 	 */
 	public static function register(): void {
 		add_action( 'init', [ self::class, 'register_taxonomy' ] );
@@ -26,7 +26,7 @@ final class TaxonomyRegistrar {
 	}
 
 	/**
-	 * Register the custom taxonomy against the built-in `revision` post type.
+	 * Registers the custom taxonomy against the built-in `revision` post type.
 	 */
 	public static function register_taxonomy(): void {
 		register_taxonomy(
@@ -53,7 +53,7 @@ final class TaxonomyRegistrar {
 	}
 
 	/**
-	 * Register term meta for the `protected` flag and post meta for per-revision notes.
+	 * Registers term meta for the `protected` flag and post meta for per-revision notes.
 	 */
 	public static function register_meta(): void {
 		register_term_meta(

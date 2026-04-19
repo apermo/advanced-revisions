@@ -22,7 +22,7 @@ final class SettingsPage {
 	public const CAPABILITY = 'manage_options';
 
 	/**
-	 * Wire the admin-menu and admin-init hooks.
+	 * Wires the admin-menu and admin-init hooks.
 	 */
 	public static function register(): void {
 		add_action( 'admin_menu', [ self::class, 'add_page' ] );
@@ -30,7 +30,7 @@ final class SettingsPage {
 	}
 
 	/**
-	 * Add the page under Settings.
+	 * Adds the page under Settings.
 	 */
 	public static function add_page(): void {
 		add_options_page(
@@ -43,7 +43,7 @@ final class SettingsPage {
 	}
 
 	/**
-	 * Register the settings, section, and field.
+	 * Registers the settings, section, and field.
 	 */
 	public static function register_settings(): void {
 		register_setting(
@@ -76,7 +76,7 @@ final class SettingsPage {
 	}
 
 	/**
-	 * Render the short intro above the per-post-type fields.
+	 * Renders the short intro above the per-post-type fields.
 	 */
 	public static function render_section_intro(): void {
 		echo '<p>';
@@ -88,7 +88,7 @@ final class SettingsPage {
 	}
 
 	/**
-	 * Render one numeric input for a single post type.
+	 * Renders one numeric input for a single post type.
 	 *
 	 * @param array<string, mixed> $args Callback args — 'post_type' key required.
 	 */
@@ -112,7 +112,7 @@ final class SettingsPage {
 	}
 
 	/**
-	 * Render the settings page shell — Settings API does the form rendering.
+	 * Renders the settings page shell — Settings API does the form rendering.
 	 */
 	public static function render_page(): void {
 		if ( ! current_user_can( self::CAPABILITY ) ) {

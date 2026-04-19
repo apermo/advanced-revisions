@@ -42,7 +42,7 @@ class Plugin {
 	}
 
 	/**
-	 * Return the main plugin file path.
+	 * Returns the main plugin file path.
 	 *
 	 * @return string
 	 */
@@ -69,7 +69,7 @@ class Plugin {
 	}
 
 	/**
-	 * Boot the plugin after all plugins are loaded.
+	 * Boots the plugin after all plugins are loaded.
 	 *
 	 * @return void
 	 */

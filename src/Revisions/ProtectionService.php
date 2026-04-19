@@ -17,7 +17,7 @@ namespace Apermo\AdvancedRevisions\Revisions;
 final class ProtectionService {
 
 	/**
-	 * Return the subset of $revision_ids that is safe to delete.
+	 * Returns the subset of $revision_ids that is safe to delete.
 	 *
 	 * An ID is removed from the input when at least one tag attached to it
 	 * has its `protected` term meta set to a truthy value.
@@ -56,7 +56,7 @@ final class ProtectionService {
 	}
 
 	/**
-	 * Return the subset of IDs that are currently protected.
+	 * Returns the subset of IDs that are currently protected.
 	 *
 	 * Strategy:
 	 * 1. Batch-fetch revision→term relationships (single DB hit via wp_get_object_terms).
@@ -91,7 +91,7 @@ final class ProtectionService {
 	}
 
 	/**
-	 * Fetch term IDs grouped by revision in a single batched query.
+	 * Fetches term IDs grouped by revision in a single batched query.
 	 *
 	 * Passes the whole revision-ID array to wp_get_object_terms() with
 	 * `all_with_object_id` so we get back rows that know which revision they
@@ -145,7 +145,7 @@ final class ProtectionService {
 	}
 
 	/**
-	 * Build a lookup of term_id → true for terms flagged protected.
+	 * Builds a lookup of term_id → true for terms flagged protected.
 	 *
 	 * @param array<int, int> $term_ids Unique term IDs to inspect.
 	 * @return array<int, bool>

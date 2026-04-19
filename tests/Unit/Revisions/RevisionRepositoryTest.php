@@ -16,7 +16,7 @@ use stdClass;
 final class RevisionRepositoryTest extends TestCase {
 
 	/**
-	 * Install a tiny $wpdb double.
+	 * Installs a tiny $wpdb double.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -25,7 +25,7 @@ final class RevisionRepositoryTest extends TestCase {
 	}
 
 	/**
-	 * Remove the $wpdb double.
+	 * Removes the $wpdb double.
 	 */
 	protected function tearDown(): void {
 		unset( $GLOBALS['wpdb'] );

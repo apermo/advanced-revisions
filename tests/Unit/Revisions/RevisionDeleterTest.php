@@ -18,7 +18,7 @@ use stdClass;
 final class RevisionDeleterTest extends TestCase {
 
 	/**
-	 * Set up Brain Monkey.
+	 * Sets up Brain Monkey.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -26,7 +26,7 @@ final class RevisionDeleterTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey.
+	 * Tears down Brain Monkey.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();
@@ -34,7 +34,7 @@ final class RevisionDeleterTest extends TestCase {
 	}
 
 	/**
-	 * Build a repository stub that returns a fixed set of revision IDs per parent.
+	 * Builds a repository stub that returns a fixed set of revision IDs per parent.
 	 *
 	 * @param array<int, int> $revision_ids Revision IDs to return.
 	 */

@@ -18,7 +18,7 @@ use stdClass;
 final class SettingsPageTest extends TestCase {
 
 	/**
-	 * Set up Brain Monkey.
+	 * Sets up Brain Monkey.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -26,7 +26,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey.
+	 * Tears down Brain Monkey.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();
@@ -34,7 +34,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
-	 * Stub get_post_types to return a fixed set of revisable types.
+	 * Stubs get_post_types to return a fixed set of revisable types.
 	 *
 	 * @param array<int, string> $types Post type slugs to consider revisable.
 	 */

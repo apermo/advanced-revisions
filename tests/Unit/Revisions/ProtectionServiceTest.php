@@ -17,7 +17,7 @@ use stdClass;
 final class ProtectionServiceTest extends TestCase {
 
 	/**
-	 * Set up Brain Monkey.
+	 * Sets up Brain Monkey.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -25,7 +25,7 @@ final class ProtectionServiceTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey.
+	 * Tears down Brain Monkey.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();
@@ -33,7 +33,7 @@ final class ProtectionServiceTest extends TestCase {
 	}
 
 	/**
-	 * Stub revision→term and term→protected maps.
+	 * Stubs revision→term and term→protected maps.
 	 *
 	 * @param array<int, array<int, int>> $terms_by_revision   revision_id → list of term IDs.
 	 * @param array<int, bool>            $protected_by_term   term_id → protected flag.

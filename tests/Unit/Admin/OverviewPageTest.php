@@ -18,7 +18,7 @@ use stdClass;
 final class OverviewPageTest extends TestCase {
 
 	/**
-	 * Set up Brain Monkey and default WP function stubs.
+	 * Sets up Brain Monkey and default WP function stubs.
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -45,7 +45,7 @@ final class OverviewPageTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey and clear superglobals.
+	 * Tears down Brain Monkey and clears superglobals.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();

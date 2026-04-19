@@ -11,7 +11,7 @@ namespace Apermo\AdvancedRevisions\Revisions;
 final class RevisionDeleter {
 
 	/**
-	 * Inject the revision repository.
+	 * Injects the revision repository.
 	 *
 	 * @param RevisionRepository $repository Provides revision IDs per parent.
 	 */
@@ -38,7 +38,7 @@ final class RevisionDeleter {
 	}
 
 	/**
-	 * Delete every unprotected revision belonging to the given parent posts.
+	 * Deletes every unprotected revision belonging to the given parent posts.
 	 *
 	 * @param array<int, int> $parent_ids Parent post IDs.
 	 * @return array{deleted:int, skipped:int}

@@ -26,14 +26,14 @@ final class PostListColumn {
 	private static ?array $counts = null;
 
 	/**
-	 * Register filters for every revision-supporting public post type.
+	 * Registers filters for every revision-supporting public post type.
 	 */
 	public static function register(): void {
 		add_action( 'admin_init', [ self::class, 'hook_post_type_filters' ] );
 	}
 
 	/**
-	 * Attach column + row-action filters to every revision-enabled post type.
+	 * Attaches column + row-action filters to every revision-enabled post type.
 	 */
 	public static function hook_post_type_filters(): void {
 		foreach ( self::supported_post_types() as $post_type ) {
@@ -46,7 +46,7 @@ final class PostListColumn {
 	}
 
 	/**
-	 * Insert our column after the date column (or at the end if date is absent).
+	 * Inserts our column after the date column (or at the end if date is absent).
 	 *
 	 * @param array<string, string> $columns Existing columns map.
 	 * @return array<string, string>
@@ -70,7 +70,7 @@ final class PostListColumn {
 	}
 
 	/**
-	 * Print the revision count for a given post.
+	 * Prints the revision count for a given post.
 	 *
 	 * @param string $column  Current column slug being rendered.
 	 * @param int    $post_id Parent post ID for this row.
@@ -94,7 +94,7 @@ final class PostListColumn {
 	}
 
 	/**
-	 * Append a "Manage revisions" row action linking to the native compare screen.
+	 * Appends a "Manage revisions" row action linking to the native compare screen.
 	 *
 	 * @param array<string, string> $actions Existing row actions.
 	 * @param \WP_Post              $post    Post being rendered.
@@ -139,7 +139,7 @@ final class PostListColumn {
 	}
 
 	/**
-	 * Return the ID of the latest revision for a post, or null if none.
+	 * Returns the ID of the latest revision for a post, or null if none.
 	 *
 	 * @param int $post_id Parent post ID.
 	 */
@@ -165,7 +165,7 @@ final class PostListColumn {
 	}
 
 	/**
-	 * Return the revision count for a single post, hitting the batch cache.
+	 * Returns the revision count for a single post, hitting the batch cache.
 	 *
 	 * @param int $post_id Parent post ID.
 	 */
@@ -177,14 +177,14 @@ final class PostListColumn {
 	}
 
 	/**
-	 * Reset the per-request cache. Intended for tests.
+	 * Resets the per-request cache. Intended for tests.
 	 */
 	public static function reset_cache(): void {
 		self::$counts = null;
 	}
 
 	/**
-	 * Load a revision-count map keyed by parent post ID.
+	 * Loads a revision-count map keyed by parent post ID.
 	 *
 	 * Scoped to the post IDs on the current admin list screen (via the main
 	 * $wp_query) so we don't aggregate across every revision on the site. If
@@ -234,7 +234,7 @@ final class PostListColumn {
 	}
 
 	/**
-	 * Extract post IDs from the main $wp_query's current page of results.
+	 * Extracts post IDs from the main $wp_query's current page of results.
 	 *
 	 * @param mixed $wp_query Global $wp_query reference (WP_Query or null).
 	 * @return array<int, int>

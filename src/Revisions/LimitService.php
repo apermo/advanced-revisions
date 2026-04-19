@@ -31,14 +31,14 @@ final class LimitService {
 	public const PER_POST_META_KEY = '_advanced_revisions_keep';
 
 	/**
-	 * Register the filter. Safe to call multiple times — the filter is idempotent.
+	 * Registers the filter. Safe to call multiple times — the filter is idempotent.
 	 */
 	public static function register(): void {
 		add_filter( 'wp_revisions_to_keep', [ self::class, 'filter_revisions_to_keep' ], 10, 2 );
 	}
 
 	/**
-	 * Override the revision count for a given post based on its type.
+	 * Overrides the revision count for a given post based on its type.
 	 *
 	 * @param int     $num  Current revision count (from core or an earlier filter).
 	 * @param WP_Post $post Post being saved.
@@ -57,7 +57,7 @@ final class LimitService {
 	}
 
 	/**
-	 * Return a per-post override, or null if the post has no override set.
+	 * Returns a per-post override, or null if the post has no override set.
 	 *
 	 * Empty string, false, or null meta values mean "inherit" — return null
 	 * so the caller falls through to the per-type rule.
