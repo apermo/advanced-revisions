@@ -4,3 +4,5 @@ parameters:
         - src
         - plugin.php
         - uninstall.php
+        - advanced-revisions-dev/advanced-revisions-dev.php
+        - advanced-revisions-dev/src

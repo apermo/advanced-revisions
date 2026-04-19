@@ -18,6 +18,15 @@ Derived from [`apermo/template-wordpress`](https://github.com/apermo/template-wo
 - Entry class: `src/Plugin.php` (lifecycle: `activate()`, `deactivate()`, `boot()`)
 - Uninstall hook: `uninstall.php`
 
+### Sibling dev plugin
+
+`advanced-revisions-dev/` is a **separate WordPress plugin** that ships test CPTs
+and seed WP-CLI commands. It's excluded from the production ZIP via
+`.gitattributes` `export-ignore`, uses its own inline autoloader (no dependency
+on the main plugin's Composer autoload), and lives under namespace
+`Apermo\AdvancedRevisionsDev\`. Pattern: [inpsyde/WP-Stash](https://github.com/inpsyde/WP-Stash/tree/main/wp-stash-test-plugin).
+Never install it in production.
+
 ### Key conventions
 
 - Coding standards: `apermo/apermo-coding-standards` (PHPCS)
