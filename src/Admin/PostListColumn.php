@@ -184,25 +184,40 @@ final class PostListColumn {
 	}
 
 	/**
-	 * Load a revision-count map keyed by parent post ID for all posts on the
-	 * Current admin list screen, via a single SQL query.
+	 * Load a revision-count map keyed by parent post ID.
+	 *
+	 * Scoped to the post IDs on the current admin list screen (via the main
+	 * $wp_query) so we don't aggregate across every revision on the site. If
+	 * no screen-scope is available, returns an empty map — the column will
+	 * render "—" until a screen-scoped query is available.
 	 *
 	 * @return array<int, int>
 	 */
 	private static function load_counts(): array {
-		global $wpdb;
+		global $wpdb, $wp_query;
 		if ( ! isset( $wpdb ) ) {
 			return [];
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- aggregation query; caching is the per-request static map above.
-		$rows = $wpdb->get_results(
+		$post_ids = self::current_screen_post_ids( $wp_query ?? null );
+		if ( $post_ids === [] ) {
+			return [];
+		}
+
+		$placeholders = \implode( ',', \array_fill( 0, \count( $post_ids ), '%d' ) );
+		$query        = \sprintf(
 			"SELECT post_parent, COUNT(*) AS revision_count
 				FROM {$wpdb->posts}
 				WHERE post_type = 'revision'
-					AND post_name NOT LIKE CONCAT(post_parent, '-autosave-%')
+					AND post_parent IN (%s)
+					AND post_name NOT LIKE CONCAT(post_parent, '-autosave-%%')
 				GROUP BY post_parent",
+			$placeholders,
 		);
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL,WordPress.DB.PreparedSQLPlaceholders -- scoped to trusted int IDs from the main query.
+		$rows = $wpdb->get_results( $wpdb->prepare( $query, ...$post_ids ) );
+		// phpcs:enable
 
 		$counts = [];
 		if ( ! \is_array( $rows ) ) {
@@ -216,6 +231,28 @@ final class PostListColumn {
 			$counts[ (int) $row_data->post_parent ] = (int) $row_data->revision_count;
 		}
 		return $counts;
+	}
+
+	/**
+	 * Extract post IDs from the main $wp_query's current page of results.
+	 *
+	 * @param mixed $wp_query Global $wp_query reference (WP_Query or null).
+	 * @return array<int, int>
+	 */
+	private static function current_screen_post_ids( mixed $wp_query ): array {
+		if ( ! \is_object( $wp_query ) || ! isset( $wp_query->posts ) || ! \is_array( $wp_query->posts ) ) {
+			return [];
+		}
+
+		$ids = [];
+		foreach ( $wp_query->posts as $post ) {
+			if ( \is_object( $post ) && isset( $post->ID ) ) {
+				$ids[] = (int) $post->ID;
+			} elseif ( \is_int( $post ) ) {
+				$ids[] = $post;
+			}
+		}
+		return $ids;
 	}
 
 	/**
