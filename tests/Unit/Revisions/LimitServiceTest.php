@@ -21,6 +21,9 @@ final class LimitServiceTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		Monkey\setUp();
+
+		// Default: no per-post override. Tests that need one override this stub.
+		Functions\when( 'get_post_meta' )->justReturn( '' );
 	}
 
 	/**
@@ -142,6 +145,51 @@ final class LimitServiceTest extends TestCase {
 		Functions\when( 'get_option' )->justReturn( [ LimitService::LIMITS_KEY => [] ] );
 
 		self::assertNull( LimitService::limit_for_type( 'post' ) );
+	}
+
+	/**
+	 * Per-post override wins over the per-type rule.
+	 */
+	public function test_per_post_override_beats_per_type_limit(): void {
+		Functions\when( 'get_option' )->justReturn(
+			[ LimitService::LIMITS_KEY => [ 'post' => 5 ] ],
+		);
+		Functions\when( 'get_post_meta' )->justReturn( 99 );
+
+		$post            = new WP_Post();
+		$post->ID        = 42;
+		$post->post_type = 'post';
+
+		$result = LimitService::filter_revisions_to_keep( 3, $post );
+
+		self::assertSame( 99, $result );
+	}
+
+	/**
+	 * An empty per-post meta value means "inherit" — per-type limit wins.
+	 */
+	public function test_empty_per_post_meta_inherits_per_type_limit(): void {
+		Functions\when( 'get_option' )->justReturn(
+			[ LimitService::LIMITS_KEY => [ 'post' => 5 ] ],
+		);
+		Functions\when( 'get_post_meta' )->justReturn( '' );
+
+		$post            = new WP_Post();
+		$post->ID        = 42;
+		$post->post_type = 'post';
+
+		$result = LimitService::filter_revisions_to_keep( 3, $post );
+
+		self::assertSame( 5, $result );
+	}
+
+	/**
+	 * Per-post override clamps to -1 at minimum.
+	 */
+	public function test_per_post_override_clamps_below_minus_one(): void {
+		Functions\when( 'get_post_meta' )->justReturn( '-99' );
+
+		self::assertSame( -1, LimitService::per_post_override( 42 ) );
 	}
 
 	/**

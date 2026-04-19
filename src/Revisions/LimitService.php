@@ -28,6 +28,8 @@ final class LimitService {
 
 	public const UNLIMITED = -1;
 
+	public const PER_POST_META_KEY = '_advanced_revisions_keep';
+
 	/**
 	 * Register the filter. Safe to call multiple times — the filter is idempotent.
 	 */
@@ -42,11 +44,32 @@ final class LimitService {
 	 * @param WP_Post $post Post being saved.
 	 */
 	public static function filter_revisions_to_keep( int $num, WP_Post $post ): int {
+		$override = self::per_post_override( $post->ID );
+		if ( $override !== null ) {
+			return $override;
+		}
+
 		$configured = self::limit_for_type( $post->post_type );
 		if ( $configured === null ) {
 			return $num;
 		}
 		return $configured;
+	}
+
+	/**
+	 * Return a per-post override, or null if the post has no override set.
+	 *
+	 * Empty string, false, or null meta values mean "inherit" — return null
+	 * so the caller falls through to the per-type rule.
+	 *
+	 * @param int $post_id Post ID.
+	 */
+	public static function per_post_override( int $post_id ): ?int {
+		$raw = get_post_meta( $post_id, self::PER_POST_META_KEY, true );
+		if ( $raw === '' || $raw === false || $raw === null ) {
+			return null;
+		}
+		return \max( self::UNLIMITED, (int) $raw );
 	}
 
 	/**
