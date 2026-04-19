@@ -68,10 +68,11 @@ final class RevisionLimitMetaBoxTest extends TestCase {
 	}
 
 	/**
-	 * Tears down Brain Monkey.
+	 * Tears down Brain Monkey and clears $_POST so state cannot leak.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();
+		$_POST = [];
 		parent::tearDown();
 	}
 

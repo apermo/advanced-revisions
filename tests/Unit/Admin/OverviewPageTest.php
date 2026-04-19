@@ -45,12 +45,13 @@ final class OverviewPageTest extends TestCase {
 	}
 
 	/**
-	 * Tears down Brain Monkey and clears superglobals.
+	 * Tears down Brain Monkey and clears superglobals so tests can't leak state.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();
 		$_POST = [];
 		$_GET  = [];
+		unset( $GLOBALS['wpdb'] );
 		parent::tearDown();
 	}
 

@@ -23,10 +23,11 @@ final class DashboardWidgetTest extends TestCase {
 	}
 
 	/**
-	 * Tears down Brain Monkey.
+	 * Tears down Brain Monkey and clears $wpdb.
 	 */
 	protected function tearDown(): void {
 		Monkey\tearDown();
+		unset( $GLOBALS['wpdb'] );
 		parent::tearDown();
 	}
 

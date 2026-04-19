@@ -43,10 +43,11 @@ final class PostListColumnTest extends TestCase {
 	}
 
 	/**
-	 * Tears down Brain Monkey + reset cache.
+	 * Tears down Brain Monkey, resets cache, and clears $wpdb.
 	 */
 	protected function tearDown(): void {
 		PostListColumn::reset_cache();
+		unset( $GLOBALS['wpdb'] );
 		Monkey\tearDown();
 		parent::tearDown();
 	}
