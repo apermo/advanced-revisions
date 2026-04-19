@@ -204,19 +204,26 @@ final class PostListColumn {
 			return [];
 		}
 
-		$placeholders = \implode( ',', \array_fill( 0, \count( $post_ids ), '%d' ) );
-		$query        = \sprintf(
-			"SELECT post_parent, COUNT(*) AS revision_count
-				FROM {$wpdb->posts}
-				WHERE post_type = 'revision'
-					AND post_parent IN (%s)
-					AND post_name NOT LIKE CONCAT(post_parent, '-autosave-%%')
-				GROUP BY post_parent",
-			$placeholders,
-		);
+		$placeholders = \implode( ', ', \array_fill( 0, \count( $post_ids ), '%d' ) );
+		// Literal LIKE pattern; no user input to escape.
+		$autosave_like = '-autosave-%';
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL,WordPress.DB.PreparedSQLPlaceholders -- scoped to trusted int IDs from the main query.
-		$rows = $wpdb->get_results( $wpdb->prepare( $query, ...$post_ids ) );
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- {$placeholders} is a fixed %d repeater; merged args feed wpdb::prepare.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT post_parent, COUNT(*) AS revision_count
+					FROM %i
+					WHERE post_type = 'revision'
+						AND post_parent IN ({$placeholders})
+						AND post_name NOT LIKE CONCAT(post_parent, %s)
+					GROUP BY post_parent",
+				\array_merge(
+					[ $wpdb->posts ],
+					$post_ids,
+					[ $autosave_like ],
+				),
+			),
+		);
 		// phpcs:enable
 
 		$counts = [];

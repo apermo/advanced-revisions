@@ -138,24 +138,33 @@ final class DashboardWidget {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- aggregation query; cached in transient.
 		$total = (int) $wpdb->get_var(
-			"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'revision'",
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM %i WHERE post_type = 'revision'",
+				[ $wpdb->posts ],
+			),
 		);
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- aggregation query; cached in transient.
 		$est_bytes = (int) $wpdb->get_var(
-			"SELECT COALESCE(SUM(LENGTH(post_content)), 0) FROM {$wpdb->posts} WHERE post_type = 'revision'",
+			$wpdb->prepare(
+				"SELECT COALESCE(SUM(LENGTH(post_content)), 0) FROM %i WHERE post_type = 'revision'",
+				[ $wpdb->posts ],
+			),
 		);
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- aggregation query; cached in transient.
 		$rows = $wpdb->get_results(
-			"SELECT p.post_title, COUNT(r.ID) AS revision_count
-				FROM {$wpdb->posts} p
-				INNER JOIN {$wpdb->posts} r
-					ON r.post_parent = p.ID AND r.post_type = 'revision'
-				WHERE p.post_type != 'revision'
-				GROUP BY p.ID
-				ORDER BY revision_count DESC
-				LIMIT 5",
+			$wpdb->prepare(
+				"SELECT p.post_title, COUNT(r.ID) AS revision_count
+					FROM %i p
+					INNER JOIN %i r
+						ON r.post_parent = p.ID AND r.post_type = 'revision'
+					WHERE p.post_type != 'revision'
+					GROUP BY p.ID
+					ORDER BY revision_count DESC
+					LIMIT 5",
+				[ $wpdb->posts, $wpdb->posts ],
+			),
 		);
 
 		$top_posts = [];

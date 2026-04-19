@@ -36,28 +36,34 @@ class RevisionRepository {
 
 		$limit  = \max( 1, \min( 500, $per_page ) );
 		$offset = \max( 0, ( $page - 1 ) * $limit );
+		// Literal LIKE pattern; no user input to escape.
+		$autosave_like = '-autosave-%';
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQLPlaceholders -- static LIKE pattern with CONCAT of parent ID (int); no user input.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- direct aggregation is the purpose of this helper; callers cache.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT p.ID, p.post_title, p.post_type, p.post_author,
 					COUNT(r.ID) AS revision_count,
 					MIN(r.post_date_gmt) AS oldest_gmt
-				FROM {$wpdb->posts} p
-				INNER JOIN {$wpdb->posts} r
+				FROM %i p
+				INNER JOIN %i r
 					ON r.post_parent = p.ID
 					AND r.post_type = 'revision'
-					AND r.post_name NOT LIKE CONCAT(p.ID, '-autosave-%')
+					AND r.post_name NOT LIKE CONCAT(p.ID, %s)
 				WHERE p.post_type != 'revision'
 					AND p.post_status IN ('publish', 'draft', 'pending', 'private', 'future')
 				GROUP BY p.ID
 				ORDER BY revision_count DESC, p.ID ASC
 				LIMIT %d OFFSET %d",
-				$limit,
-				$offset,
+				[
+					$wpdb->posts,
+					$wpdb->posts,
+					$autosave_like,
+					$limit,
+					$offset,
+				],
 			),
 		);
-		// phpcs:enable
 
 		if ( ! \is_array( $rows ) ) {
 			return [];
@@ -87,12 +93,21 @@ class RevisionRepository {
 			return 0;
 		}
 
+		// Literal LIKE pattern; no user input to escape.
+		$autosave_like = '-autosave-%';
+
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- aggregation count; cached per-request.
 		$count = $wpdb->get_var(
-			"SELECT COUNT(DISTINCT r.post_parent)
-				FROM {$wpdb->posts} r
-				WHERE r.post_type = 'revision'
-					AND r.post_name NOT LIKE CONCAT(r.post_parent, '-autosave-%')",
+			$wpdb->prepare(
+				"SELECT COUNT(DISTINCT r.post_parent)
+					FROM %i r
+					WHERE r.post_type = 'revision'
+						AND r.post_name NOT LIKE CONCAT(r.post_parent, %s)",
+				[
+					$wpdb->posts,
+					$autosave_like,
+				],
+			),
 		);
 
 		return (int) $count;
@@ -110,23 +125,25 @@ class RevisionRepository {
 			return [];
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders -- %d placeholders built from a fixed count of parent IDs.
-		$placeholders = \implode( ',', \array_fill( 0, \count( $parent_ids ), '%d' ) );
+		$placeholders = \implode( ', ', \array_fill( 0, \count( $parent_ids ), '%d' ) );
+		// Literal LIKE pattern; no user input to escape.
+		$autosave_like = '-autosave-%';
 
-		// Exclude autosaves so the count shown in paginated() matches what gets
-		// deleted by bulk actions. Autosave rows have post_name like '<id>-autosave-%'.
-		$query = \sprintf(
-			"SELECT ID FROM {$wpdb->posts}
-				WHERE post_type = 'revision'
-				AND post_parent IN (%s)
-				AND post_name NOT LIKE CONCAT(post_parent, '-autosave-%%')",
-			$placeholders,
-		);
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- placeholders built above from a fixed count of trusted int IDs; values passed through wpdb::prepare.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- {$placeholders} is a fixed %d repeater; merged args feed wpdb::prepare.
 		$ids = $wpdb->get_col(
-			$wpdb->prepare( $query, ...$parent_ids ), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$wpdb->prepare(
+				"SELECT ID FROM %i
+					WHERE post_type = 'revision'
+					AND post_parent IN ({$placeholders})
+					AND post_name NOT LIKE CONCAT(post_parent, %s)",
+				\array_merge(
+					[ $wpdb->posts ],
+					$parent_ids,
+					[ $autosave_like ],
+				),
+			),
 		);
+		// phpcs:enable
 
 		if ( ! \is_array( $ids ) ) {
 			return [];
