@@ -14,11 +14,11 @@ use Apermo\AdvancedRevisions\Revisions\RevisionRepository;
  */
 final class OverviewPage {
 
-	public const MENU_SLUG    = 'advanced-revisions-overview';
-	public const CAPABILITY   = 'edit_others_posts';
-	public const NONCE_ACTION = 'advanced_revisions_overview_bulk';
-	public const NONCE_NAME   = 'advanced_revisions_overview_nonce';
-	public const BULK_FIELD   = 'ar_bulk_delete';
+	public const MENU_SLUG           = 'advanced-revisions-overview';
+	public const REQUIRED_CAPABILITY = 'edit_others_posts';
+	public const NONCE_ACTION        = 'advanced_revisions_overview_bulk';
+	public const NONCE_NAME          = 'advanced_revisions_overview_nonce';
+	public const BULK_FIELD          = 'ar_bulk_delete';
 
 	/**
 	 * Wires the admin-menu and request-handling hooks.
@@ -35,7 +35,7 @@ final class OverviewPage {
 		add_management_page(
 			__( 'Revisions Overview', 'advanced-revisions' ),
 			__( 'Revisions', 'advanced-revisions' ),
-			self::CAPABILITY,
+			self::REQUIRED_CAPABILITY,
 			self::MENU_SLUG,
 			[ self::class, 'render' ],
 		);
@@ -45,7 +45,7 @@ final class OverviewPage {
 	 * Renders the overview table.
 	 */
 	public static function render(): void {
-		if ( ! current_user_can( self::CAPABILITY ) ) {
+		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) ) {
 			return;
 		}
 
@@ -77,7 +77,7 @@ final class OverviewPage {
 	 * Handles the bulk-delete POST submission from the overview form.
 	 */
 	public static function handle_bulk_post(): void {
-		if ( ! current_user_can( self::CAPABILITY ) ) {
+		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) ) {
 			wp_die( esc_html__( 'Insufficient permissions.', 'advanced-revisions' ) );
 		}
 

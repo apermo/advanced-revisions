@@ -56,7 +56,7 @@ final class OverviewPageTest extends TestCase {
 	}
 
 	/**
-	 * Registering hooks admin_menu and admin_post_*.
+	 * Verifies register() wires admin_menu and admin_post_* hooks.
 	 */
 	public function test_register_hooks_admin_menu_and_admin_post(): void {
 		Functions\expect( 'add_action' )->times( 2 );
@@ -65,7 +65,7 @@ final class OverviewPageTest extends TestCase {
 	}
 
 	/**
-	 * The add_page helper mounts the page under Tools.
+	 * Verifies the add_page helper mounts the page under Tools.
 	 */
 	public function test_add_page_registers_under_tools(): void {
 		$captured = [];
@@ -79,11 +79,11 @@ final class OverviewPageTest extends TestCase {
 		OverviewPage::add_page();
 
 		self::assertSame( OverviewPage::MENU_SLUG, $captured[3] );
-		self::assertSame( OverviewPage::CAPABILITY, $captured[2] );
+		self::assertSame( OverviewPage::REQUIRED_CAPABILITY, $captured[2] );
 	}
 
 	/**
-	 * The render method returns silently when the user lacks capability.
+	 * Asserts render() returns silently when the user lacks capability.
 	 */
 	public function test_render_bails_without_capability(): void {
 		Functions\when( 'current_user_can' )->justReturn( false );
@@ -96,7 +96,7 @@ final class OverviewPageTest extends TestCase {
 	}
 
 	/**
-	 * Empty-state render emits the no-revisions message.
+	 * Verifies that the empty-state render emits the no-revisions message.
 	 */
 	public function test_render_shows_empty_state_when_no_rows(): void {
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride -- test-local wpdb stub.
@@ -111,7 +111,7 @@ final class OverviewPageTest extends TestCase {
 	}
 
 	/**
-	 * The bulk-post handler exits via wp_die on missing capability.
+	 * Asserts the bulk-post handler exits via wp_die on missing capability.
 	 */
 	public function test_handle_bulk_post_dies_without_capability(): void {
 		Functions\when( 'current_user_can' )->justReturn( false );
@@ -134,7 +134,7 @@ final class OverviewPageTest extends TestCase {
 	}
 
 	/**
-	 * Full render path with rows and pagination covers render_form + render_row.
+	 * Covers render_form + render_row via the full render path with rows and pagination.
 	 */
 	public function test_render_full_table_with_rows(): void {
 		// phpcs:ignore SlevomatCodingStandard.PHP.ForbiddenClasses.ForbiddenClass
@@ -195,7 +195,7 @@ final class OverviewPageTest extends TestCase {
 	}
 
 	/**
-	 * The bulk-post handler redirects with ar_bulk=empty when no selection.
+	 * Verifies the bulk-post handler redirects with ar_bulk=empty on no selection.
 	 */
 	public function test_handle_bulk_post_redirects_on_empty_selection(): void {
 		$_POST = [

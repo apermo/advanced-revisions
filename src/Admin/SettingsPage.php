@@ -19,7 +19,7 @@ final class SettingsPage {
 
 	public const SECTION_ID = 'advanced_revisions_limits_section';
 
-	public const CAPABILITY = 'manage_options';
+	public const REQUIRED_CAPABILITY = 'manage_options';
 
 	/**
 	 * Wires the admin-menu and admin-init hooks.
@@ -36,7 +36,7 @@ final class SettingsPage {
 		add_options_page(
 			__( 'Advanced Revisions', 'advanced-revisions' ),
 			__( 'Revisions', 'advanced-revisions' ),
-			self::CAPABILITY,
+			self::REQUIRED_CAPABILITY,
 			self::MENU_SLUG,
 			[ self::class, 'render_page' ],
 		);
@@ -115,7 +115,7 @@ final class SettingsPage {
 	 * Renders the settings page shell — Settings API does the form rendering.
 	 */
 	public static function render_page(): void {
-		if ( ! current_user_can( self::CAPABILITY ) ) {
+		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) ) {
 			return;
 		}
 		echo '<div class="wrap">';
@@ -129,8 +129,8 @@ final class SettingsPage {
 	}
 
 	/**
-	 * Sanitize submitted settings — clamp to int, drop unknown post types,
-	 * remove blank entries so defaults fall through cleanly.
+	 * Sanitizes submitted settings — clamps to int, drops unknown post types,
+	 * removes blank entries so defaults fall through cleanly.
 	 *
 	 * @param mixed $input Raw submitted value.
 	 * @return array<string, array<string, int>>
@@ -161,7 +161,7 @@ final class SettingsPage {
 	}
 
 	/**
-	 * Public post types that actually support revisions, keyed slug → label.
+	 * Returns public post types that actually support revisions, keyed slug → label.
 	 *
 	 * @return array<string, string>
 	 */

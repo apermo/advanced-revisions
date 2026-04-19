@@ -56,7 +56,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
-	 * Registering hooks admin_menu and admin_init.
+	 * Verifies register() wires admin_menu and admin_init hooks.
 	 */
 	public function test_register_hooks_admin_menu_and_admin_init(): void {
 		Functions\expect( 'add_action' )
@@ -70,7 +70,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
-	 * Sanitizer drops keys for post types that don't support revisions.
+	 * Asserts the sanitizer drops keys for post types that don't support revisions.
 	 */
 	public function test_sanitize_drops_unknown_post_types(): void {
 		$this->stub_post_types( [ 'post', 'page' ] );
@@ -91,7 +91,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
-	 * Sanitizer coerces string numbers and clamps below -1.
+	 * Asserts the sanitizer coerces string numbers and clamps below -1.
 	 */
 	public function test_sanitize_clamps_and_coerces(): void {
 		$this->stub_post_types( [ 'post' ] );
@@ -107,7 +107,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
-	 * Empty string values are treated as "inherit" and dropped from storage.
+	 * Verifies that empty string values are treated as "inherit" and dropped from storage.
 	 */
 	public function test_sanitize_drops_empty_strings(): void {
 		$this->stub_post_types( [ 'post', 'page' ] );
@@ -128,7 +128,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
-	 * The add_page helper registers under Settings with the expected slug + capability.
+	 * Verifies the add_page helper registers under Settings with the expected slug + capability.
 	 */
 	public function test_add_page_registers_under_settings(): void {
 		Functions\when( '__' )->returnArg();
@@ -142,7 +142,7 @@ final class SettingsPageTest extends TestCase {
 
 		SettingsPage::add_page();
 
-		self::assertSame( SettingsPage::CAPABILITY, $captured[2] );
+		self::assertSame( SettingsPage::REQUIRED_CAPABILITY, $captured[2] );
 		self::assertSame( SettingsPage::MENU_SLUG, $captured[3] );
 	}
 
@@ -180,7 +180,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
-	 * Section-intro rendering prints a description paragraph.
+	 * Verifies section-intro rendering prints a description paragraph.
 	 */
 	public function test_render_section_intro_prints_description(): void {
 		Functions\when( 'esc_html__' )->returnArg();
@@ -194,7 +194,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
-	 * Limit-field rendering prints a number input for the given post type.
+	 * Verifies limit-field rendering prints a number input for the given post type.
 	 */
 	public function test_render_limit_field_prints_input(): void {
 		Functions\when( 'get_post_meta' )->justReturn( '' );
@@ -209,7 +209,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
-	 * Page rendering bails when user lacks capability.
+	 * Asserts page rendering bails when user lacks capability.
 	 */
 	public function test_render_page_bails_without_capability(): void {
 		Functions\when( 'current_user_can' )->justReturn( false );
@@ -222,7 +222,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
-	 * Page rendering emits the standard wrap + form when capable.
+	 * Verifies page rendering emits the standard wrap + form when capable.
 	 */
 	public function test_render_page_emits_wrap_and_form(): void {
 		Functions\when( 'current_user_can' )->justReturn( true );
@@ -240,7 +240,7 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
-	 * Non-array inputs normalize to an empty limits map (never crash).
+	 * Verifies non-array inputs normalize to an empty limits map (never crash).
 	 */
 	public function test_sanitize_handles_non_array_input(): void {
 		$cleaned = SettingsPage::sanitize_settings( 'garbage' );

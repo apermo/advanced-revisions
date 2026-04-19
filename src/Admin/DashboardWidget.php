@@ -13,9 +13,9 @@ namespace Apermo\AdvancedRevisions\Admin;
  */
 final class DashboardWidget {
 
-	public const WIDGET_ID     = 'advanced_revisions_dashboard';
-	public const TRANSIENT_KEY = 'advanced_revisions_dashboard_stats';
-	public const CAPABILITY    = 'edit_others_posts';
+	public const WIDGET_ID           = 'advanced_revisions_dashboard';
+	public const TRANSIENT_KEY       = 'advanced_revisions_dashboard_stats';
+	public const REQUIRED_CAPABILITY = 'edit_others_posts';
 
 	/**
 	 * Transient TTL in seconds (1 hour).
@@ -33,7 +33,7 @@ final class DashboardWidget {
 	 * Adds the widget to the dashboard — gated by capability.
 	 */
 	public static function add_widget(): void {
-		if ( ! current_user_can( self::CAPABILITY ) ) {
+		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) ) {
 			return;
 		}
 		wp_add_dashboard_widget(
