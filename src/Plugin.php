@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Apermo\AdvancedRevisions;
 
 use Apermo\AdvancedRevisions\Admin\DashboardWidget;
+use Apermo\AdvancedRevisions\Admin\OverviewPage;
 use Apermo\AdvancedRevisions\Admin\PostListColumn;
 use Apermo\AdvancedRevisions\Admin\RevisionLimitMetaBox;
 use Apermo\AdvancedRevisions\Admin\SettingsPage;
@@ -80,6 +81,7 @@ class Plugin {
 			PostListColumn::register();
 			DashboardWidget::register();
 			RevisionLimitMetaBox::register();
+			OverviewPage::register();
 		}
 	}
 }

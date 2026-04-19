@@ -1,0 +1,66 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Apermo\AdvancedRevisions\Revisions;
+
+/**
+ * Deletes revisions for a set of parent post IDs, honoring the protection
+ * flag from {@see ProtectionService}.
+ */
+final class RevisionDeleter {
+
+	/**
+	 * Inject the revision repository.
+	 *
+	 * @param RevisionRepository $repository Provides revision IDs per parent.
+	 */
+	public function __construct(
+		private readonly RevisionRepository $repository,
+	) {
+	}
+
+	/**
+	 * Dry-run: return the number of deletable vs. protected revisions for a
+	 * set of parent posts. Caller can use this to populate a confirmation UI.
+	 *
+	 * @param array<int, int> $parent_ids Parent post IDs.
+	 * @return array{deletable:int, protected:int}
+	 */
+	public function preview( array $parent_ids ): array {
+		$revision_ids = $this->repository->revision_ids_for_parents( $parent_ids );
+		$deletable    = ProtectionService::filter_deletable( $revision_ids );
+
+		return [
+			'deletable' => \count( $deletable ),
+			'protected' => ProtectionService::count_protected( $revision_ids ),
+		];
+	}
+
+	/**
+	 * Delete every unprotected revision belonging to the given parent posts.
+	 *
+	 * @param array<int, int> $parent_ids Parent post IDs.
+	 * @return array{deleted:int, skipped:int}
+	 */
+	public function delete_for_parents( array $parent_ids ): array {
+		$revision_ids = $this->repository->revision_ids_for_parents( $parent_ids );
+		$deletable    = ProtectionService::filter_deletable( $revision_ids );
+		$protected    = \count( $revision_ids ) - \count( $deletable );
+
+		$deleted = 0;
+		foreach ( $deletable as $revision_id ) {
+			// phpcs:ignore Apermo.WordPress.RequireWpErrorHandling.Unchecked -- wp_delete_post_revision typed without WP_Error.
+			$result = wp_delete_post_revision( $revision_id );
+			if ( $result === false || $result === null ) {
+				continue;
+			}
+			$deleted++;
+		}
+
+		return [
+			'deleted' => $deleted,
+			'skipped' => $protected,
+		];
+	}
+}
