@@ -7,6 +7,7 @@ namespace Apermo\AdvancedRevisions\Tests\Unit;
 use Apermo\AdvancedRevisions\Plugin;
 use Brain\Monkey;
 use Brain\Monkey\Functions;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -99,12 +100,16 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Verify boot can be called without error.
+	 * Verify boot wires the per-type revision limit filter.
 	 *
 	 * @return void
 	 */
 	public function test_boot(): void {
+		Functions\when( 'is_admin' )->justReturn( false );
+		Functions\expect( 'add_filter' )
+			->once()
+			->with( 'wp_revisions_to_keep', Mockery::type( 'array' ), 10, 2 );
+
 		Plugin::boot();
-		$this->assertTrue( true );
 	}
 }

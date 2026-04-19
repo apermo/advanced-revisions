@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Apermo\AdvancedRevisions;
 
+use Apermo\AdvancedRevisions\Admin\SettingsPage;
+use Apermo\AdvancedRevisions\Revisions\LimitService;
+
 /**
  * Main plugin class.
  */
@@ -66,6 +69,9 @@ class Plugin {
 	 * @return void
 	 */
 	public static function boot(): void {
-		// Initialize plugin functionality.
+		LimitService::register();
+		if ( is_admin() ) {
+			SettingsPage::register();
+		}
 	}
 }

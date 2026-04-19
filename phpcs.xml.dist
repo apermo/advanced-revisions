@@ -55,6 +55,8 @@
                 <element value="key"/>
                 <element value="min"/>
                 <element value="max"/>
+                <element value="num"/>
+                <element value="raw"/>
                 <element value="rng"/>
             </property>
         </properties>
