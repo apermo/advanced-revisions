@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Apermo\AdvancedRevisions;
 
+use Apermo\AdvancedRevisions\Admin\DashboardWidget;
 use Apermo\AdvancedRevisions\Admin\PostListColumn;
 use Apermo\AdvancedRevisions\Admin\SettingsPage;
 use Apermo\AdvancedRevisions\Revisions\LimitService;
@@ -76,6 +77,7 @@ class Plugin {
 		if ( is_admin() ) {
 			SettingsPage::register();
 			PostListColumn::register();
+			DashboardWidget::register();
 		}
 	}
 }
