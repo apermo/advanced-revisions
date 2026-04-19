@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Apermo\AdvancedRevisions\Revisions;
 
 /**
- * Central protection check consumed by every cleanup path (#3, #5, #6, #7).
+ * Centralizes the protection check consumed by every cleanup path (#3, #5, #6, #7).
  *
  * Given a list of revision IDs, {@see self::filter_deletable()} returns the
  * subset that is NOT wearing a tag with the `protected` term meta flag set.
@@ -44,7 +44,7 @@ final class ProtectionService {
 	}
 
 	/**
-	 * How many of the given IDs are protected. Handy for confirmation UIs.
+	 * Counts how many of the given IDs are protected. Handy for confirmation UIs.
 	 *
 	 * @param array<int, int> $revision_ids Revision IDs to count.
 	 */
@@ -129,7 +129,7 @@ final class ProtectionService {
 	}
 
 	/**
-	 * Unique term IDs across all fetched revisions.
+	 * Collects unique term IDs across all fetched revisions.
 	 *
 	 * @param array<int, array<int, int>> $terms_by_revision Per-revision term ID list.
 	 * @return array<int, int>

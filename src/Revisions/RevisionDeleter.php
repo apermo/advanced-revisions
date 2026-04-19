@@ -21,8 +21,9 @@ final class RevisionDeleter {
 	}
 
 	/**
-	 * Dry-run: return the number of deletable vs. protected revisions for a
-	 * set of parent posts. Caller can use this to populate a confirmation UI.
+	 * Previews deletable vs. protected revision counts for a set of parent
+	 * posts without deleting anything. Caller can use this to populate a
+	 * confirmation UI.
 	 *
 	 * @param array<int, int> $parent_ids Parent post IDs.
 	 * @return array{deletable:int, protected:int}
