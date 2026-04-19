@@ -50,7 +50,7 @@ final class DashboardWidget {
 		$stats = self::stats();
 
 		if ( $stats['total'] === 0 ) {
-			echo '<p>' . esc_html__( 'No stored revisions. You are clean.', 'advanced-revisions' ) . '</p>';
+			echo '<p>' . esc_html__( 'No stored revisions.', 'advanced-revisions' ) . '</p>';
 			return;
 		}
 
