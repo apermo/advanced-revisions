@@ -30,15 +30,15 @@ final class ProtectionService {
 			return [];
 		}
 
-		$protected = self::protected_revision_ids( $revision_ids );
-		if ( $protected === [] ) {
+		$protected_lookup = \array_flip( self::protected_revision_ids( $revision_ids ) );
+		if ( $protected_lookup === [] ) {
 			return \array_values( $revision_ids );
 		}
 
 		return \array_values(
 			\array_filter(
 				$revision_ids,
-				static fn( int $id ): bool => ! \in_array( $id, $protected, true ),
+				static fn( int $id ): bool => ! isset( $protected_lookup[ $id ] ),
 			),
 		);
 	}
@@ -58,43 +58,91 @@ final class ProtectionService {
 	/**
 	 * Return the subset of IDs that are currently protected.
 	 *
-	 * Strategy: walk each ID, look up its revision_tag terms, and if any of
-	 * those terms has the `protected` term meta set truthy, flag the ID.
+	 * Strategy:
+	 * 1. Batch-fetch revision→term relationships (single DB hit via wp_get_object_terms).
+	 * 2. Build a map of term_id → protected flag by priming term meta once.
+	 * 3. Walk the input, marking any revision that wears a protected term.
 	 *
 	 * @param array<int, int> $revision_ids Revision IDs to check.
 	 * @return array<int, int> Protected subset.
 	 */
 	private static function protected_revision_ids( array $revision_ids ): array {
-		$protected = [];
-
-		foreach ( $revision_ids as $revision_id ) {
-			if ( self::is_revision_protected( $revision_id ) ) {
-				$protected[] = $revision_id;
-			}
+		$terms_by_revision = self::terms_by_revision( $revision_ids );
+		if ( $terms_by_revision === [] ) {
+			return [];
 		}
 
+		$unique_term_ids = self::unique_term_ids( $terms_by_revision );
+		$protected_terms = self::protected_term_lookup( $unique_term_ids );
+		if ( $protected_terms === [] ) {
+			return [];
+		}
+
+		$protected = [];
+		foreach ( $terms_by_revision as $revision_id => $term_ids ) {
+			foreach ( $term_ids as $term_id ) {
+				if ( isset( $protected_terms[ $term_id ] ) ) {
+					$protected[] = $revision_id;
+					break;
+				}
+			}
+		}
 		return $protected;
 	}
 
 	/**
-	 * True when this revision wears at least one tag with the protected flag.
+	 * Fetch term IDs for each revision in one call. Revisions without any
+	 * revision_tag terms are omitted from the result.
 	 *
-	 * @param int $revision_id Revision post ID.
+	 * @param array<int, int> $revision_ids Revision IDs.
+	 * @return array<int, array<int, int>>
 	 */
-	private static function is_revision_protected( int $revision_id ): bool {
-		$terms = wp_get_object_terms( $revision_id, TaxonomyRegistrar::TAXONOMY, [ 'fields' => 'ids' ] );
-
-		if ( ! \is_array( $terms ) || $terms === [] ) {
-			return false;
+	private static function terms_by_revision( array $revision_ids ): array {
+		$result = [];
+		foreach ( $revision_ids as $revision_id ) {
+			$terms = wp_get_object_terms(
+				$revision_id,
+				TaxonomyRegistrar::TAXONOMY,
+				[ 'fields' => 'ids' ],
+			);
+			if ( ! \is_array( $terms ) || $terms === [] ) {
+				continue;
+			}
+			$result[ $revision_id ] = \array_map( 'intval', $terms );
 		}
+		return $result;
+	}
 
-		foreach ( $terms as $term_id ) {
-			$flag = get_term_meta( $term_id, TaxonomyRegistrar::PROTECTED_META, true );
-			if ( (bool) $flag ) {
-				return true;
+	/**
+	 * Unique term IDs across all fetched revisions.
+	 *
+	 * @param array<int, array<int, int>> $terms_by_revision Per-revision term ID list.
+	 * @return array<int, int>
+	 */
+	private static function unique_term_ids( array $terms_by_revision ): array {
+		$ids = [];
+		foreach ( $terms_by_revision as $term_ids ) {
+			foreach ( $term_ids as $term_id ) {
+				$ids[ $term_id ] = $term_id;
 			}
 		}
+		return \array_values( $ids );
+	}
 
-		return false;
+	/**
+	 * Build a lookup of term_id → true for terms flagged protected.
+	 *
+	 * @param array<int, int> $term_ids Unique term IDs to inspect.
+	 * @return array<int, bool>
+	 */
+	private static function protected_term_lookup( array $term_ids ): array {
+		$lookup = [];
+		foreach ( $term_ids as $term_id ) {
+			$flag = get_term_meta( $term_id, TaxonomyRegistrar::PROTECTED_META, true );
+			if ( (bool) $flag ) {
+				$lookup[ $term_id ] = true;
+			}
+		}
+		return $lookup;
 	}
 }

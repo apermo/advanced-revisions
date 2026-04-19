@@ -117,17 +117,51 @@ final class PostListColumn {
 	/**
 	 * URL of the native revision compare screen for a post.
 	 *
+	 * Note: revision.php expects a revision ID (post_type=revision), not the
+	 * parent post ID. If we can find the latest revision, link directly to it;
+	 * otherwise fall back to the post edit screen which has a native "Browse"
+	 * link to revisions.
+	 *
 	 * @param int $post_id Parent post ID.
 	 */
 	public static function compare_url( int $post_id ): string {
-		$base_url = admin_url( 'revision.php' );
-		return add_query_arg(
+		$latest_revision = self::latest_revision_id( $post_id );
+
+		if ( $latest_revision !== null ) {
+			return add_query_arg(
+				[ 'revision' => $latest_revision ],
+				admin_url( 'revision.php' ),
+			);
+		}
+
+		$edit = get_edit_post_link( $post_id, 'raw' );
+		return \is_string( $edit ) && $edit !== '' ? $edit : admin_url();
+	}
+
+	/**
+	 * Return the ID of the latest revision for a post, or null if none.
+	 *
+	 * @param int $post_id Parent post ID.
+	 */
+	private static function latest_revision_id( int $post_id ): ?int {
+		$revisions = wp_get_post_revisions(
+			$post_id,
 			[
-				'from' => $post_id,
-				'to'   => $post_id,
+				'numberposts' => 1,
+				'order'       => 'DESC',
+				'orderby'     => 'post_date_gmt',
 			],
-			$base_url,
 		);
+
+		if ( $revisions === [] ) {
+			return null;
+		}
+
+		$first = \reset( $revisions );
+		if ( ! $first instanceof WP_Post ) {
+			return null;
+		}
+		return $first->ID;
 	}
 
 	/**

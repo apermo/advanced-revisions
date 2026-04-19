@@ -29,6 +29,17 @@ final class PostListColumnTest extends TestCase {
 		Functions\when( 'esc_html' )->returnArg();
 		Functions\when( 'esc_html__' )->returnArg();
 		Functions\when( 'esc_url' )->returnArg();
+		Functions\when( 'esc_attr' )->returnArg();
+		Functions\when( 'wp_get_post_revisions' )->justReturn( [] );
+		Functions\when( 'get_edit_post_link' )->justReturn( '' );
+		Functions\when( 'admin_url' )->alias(
+			static fn( string $path = '' ): string => 'https://example.tld/wp-admin/' . $path,
+		);
+		Functions\when( 'add_query_arg' )->alias(
+			static function ( array $args, string $url ): string {
+				return $url . '?' . \http_build_query( $args );
+			},
+		);
 	}
 
 	/**
@@ -95,11 +106,6 @@ final class PostListColumnTest extends TestCase {
 	 * Row action appends the Manage revisions link when the count is positive.
 	 */
 	public function test_add_row_action_appends_link_when_revisions_exist(): void {
-		Functions\when( 'admin_url' )->justReturn( 'https://example.tld/wp-admin/revision.php' );
-		Functions\when( 'add_query_arg' )->justReturn( 'https://example.tld/wp-admin/revision.php?from=42&to=42' );
-		Functions\when( 'esc_url' )->returnArg();
-		Functions\when( 'esc_html__' )->returnArg();
-
 		// Inject a non-zero count without running SQL by priming the cache
 		// via reflection of the static property.
 		$reflection = new ReflectionClass( PostListColumn::class );
@@ -116,21 +122,17 @@ final class PostListColumnTest extends TestCase {
 	}
 
 	/**
-	 * The compare_url helper composes the expected admin URL with from/to args.
+	 * The compare_url helper links to revision.php with a real revision ID.
 	 */
 	public function test_compare_url_builds_admin_revision_php_url(): void {
-		Functions\when( 'admin_url' )->justReturn( 'https://example.tld/wp-admin/revision.php' );
-		Functions\when( 'add_query_arg' )->alias(
-			static function ( array $args, string $url ): string {
-				return $url . '?' . \http_build_query( $args );
-			},
-		);
+		$revision     = new WP_Post();
+		$revision->ID = 9001;
+		Functions\when( 'wp_get_post_revisions' )->justReturn( [ $revision ] );
 
 		$url = PostListColumn::compare_url( 42 );
 
 		self::assertStringContainsString( 'revision.php', $url );
-		self::assertStringContainsString( 'from=42', $url );
-		self::assertStringContainsString( 'to=42', $url );
+		self::assertStringContainsString( 'revision=9001', $url );
 	}
 
 	/**

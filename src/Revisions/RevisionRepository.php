@@ -113,8 +113,13 @@ class RevisionRepository {
 		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders -- %d placeholders built from a fixed count of parent IDs.
 		$placeholders = \implode( ',', \array_fill( 0, \count( $parent_ids ), '%d' ) );
 
+		// Exclude autosaves so the count shown in paginated() matches what gets
+		// deleted by bulk actions. Autosave rows have post_name like '<id>-autosave-%'.
 		$query = \sprintf(
-			"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'revision' AND post_parent IN (%s)",
+			"SELECT ID FROM {$wpdb->posts}
+				WHERE post_type = 'revision'
+				AND post_parent IN (%s)
+				AND post_name NOT LIKE CONCAT(post_parent, '-autosave-%%')",
 			$placeholders,
 		);
 

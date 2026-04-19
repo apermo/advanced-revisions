@@ -58,8 +58,13 @@ final class ContentSeeder {
 		$rng        = new Randomizer( $options['seed'] );
 		$author_ids = $this->ensure_authors( $options['authors'] );
 		$statuses   = self::STATUS_PRESETS[ $options['status_mix'] ] ?? self::STATUS_PRESETS['publish'];
-		$now_gmt    = \time();
-		$spread     = \max( 1, $options['date_spread'] ) * 86_400;
+		// Anchor "now" to a caller-provided timestamp when given, so --seed=N
+		// produces byte-identical dates across runs. Without an anchor we fall
+		// back to time() — documented as time-relative in that case.
+		$now_gmt = isset( $options['now'] ) && \is_int( $options['now'] ) && $options['now'] > 0
+			? $options['now']
+			: \time();
+		$spread  = \max( 1, $options['date_spread'] ) * 86_400;
 
 		$totals = [];
 		foreach ( $options['post_types'] as $post_type ) {

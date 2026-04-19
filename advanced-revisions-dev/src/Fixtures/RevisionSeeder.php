@@ -54,6 +54,10 @@ final class RevisionSeeder {
 		$ratio   = (float) ( $options['autosave_ratio'] ?? 0.1 );
 		$orphans = \max( 0, (int) ( $options['orphan_count'] ?? 0 ) );
 		$range   = self::DISTRIBUTIONS[ $dist ] ?? self::DISTRIBUTIONS['normal'];
+		// Anchor "now" once per run so --seed=N reproduces identical timestamps.
+		$now_gmt = isset( $options['now'] ) && \is_int( $options['now'] ) && $options['now'] > 0
+			? $options['now']
+			: \time();
 		$stats   = [
 			'revisions' => 0,
 			'autosaves' => 0,
@@ -61,12 +65,12 @@ final class RevisionSeeder {
 		];
 
 		foreach ( $post_ids as $post_id ) {
-			$counts = $this->seed_for_parent( $rng, $post_id, $range, $ratio, $spread );
+			$counts = $this->seed_for_parent( $rng, $post_id, $range, $ratio, $spread, $now_gmt );
 			$stats['revisions'] += $counts[0];
 			$stats['autosaves'] += $counts[1];
 		}
 
-		$stats['orphans'] = $this->seed_orphans( $rng, $orphans, $spread );
+		$stats['orphans'] = $this->seed_orphans( $rng, $orphans, $spread, $now_gmt );
 
 		return $stats;
 	}
@@ -76,12 +80,13 @@ final class RevisionSeeder {
 	 *
 	 * @param Randomizer     $rng         Deterministic PRNG.
 	 * @param int            $post_id     Parent post ID.
-	 * @param array{int,int} $range     [min, max] revision count bounds.
+	 * @param array{int,int} $range       [min, max] revision count bounds.
 	 * @param float          $ratio       Autosave ratio (0..1).
 	 * @param int            $spread_days Historical date window in days.
+	 * @param int            $now_gmt     Anchor timestamp (seconds since epoch, UTC).
 	 * @return array{int, int} Tuple of [revisions_inserted, autosaves_inserted].
 	 */
-	private function seed_for_parent( Randomizer $rng, int $post_id, array $range, float $ratio, int $spread_days ): array {
+	private function seed_for_parent( Randomizer $rng, int $post_id, array $range, float $ratio, int $spread_days, int $now_gmt ): array {
 		$parent_post = get_post( $post_id );
 		if ( ! $parent_post instanceof WP_Post ) {
 			return [ 0, 0 ];
@@ -91,8 +96,8 @@ final class RevisionSeeder {
 		$autosave_count = (int) \floor( $total * $ratio );
 		$revision_count = $total - $autosave_count;
 
-		$revisions = $this->insert_revisions( $rng, $parent_post, $revision_count, $spread_days, false );
-		$autosaves = $this->insert_revisions( $rng, $parent_post, $autosave_count, $spread_days, true );
+		$revisions = $this->insert_revisions( $rng, $parent_post, $revision_count, $spread_days, false, $now_gmt );
+		$autosaves = $this->insert_revisions( $rng, $parent_post, $autosave_count, $spread_days, true, $now_gmt );
 
 		return [ $revisions, $autosaves ];
 	}
@@ -105,11 +110,12 @@ final class RevisionSeeder {
 	 * @param int        $count       Number of rows to insert.
 	 * @param int        $spread_days Historical date window in days.
 	 * @param bool       $is_autosave Whether to use the autosave post_name pattern.
+	 * @param int        $now_gmt     Anchor timestamp (seconds since epoch, UTC).
 	 */
-	private function insert_revisions( Randomizer $rng, WP_Post $parent_post, int $count, int $spread_days, bool $is_autosave ): int {
+	private function insert_revisions( Randomizer $rng, WP_Post $parent_post, int $count, int $spread_days, bool $is_autosave, int $now_gmt ): int {
 		$inserted = 0;
 		for ( $i = 1; $i <= $count; $i++ ) {
-			if ( $this->insert_revision( $rng, $parent_post, $i, $spread_days, $is_autosave ) ) {
+			if ( $this->insert_revision( $rng, $parent_post, $i, $spread_days, $is_autosave, $now_gmt ) ) {
 				$inserted++;
 			}
 		}
@@ -122,11 +128,12 @@ final class RevisionSeeder {
 	 * @param Randomizer $rng         Deterministic PRNG.
 	 * @param int        $count       Number of orphans to insert.
 	 * @param int        $spread_days Historical date window in days.
+	 * @param int        $now_gmt     Anchor timestamp (seconds since epoch, UTC).
 	 */
-	private function seed_orphans( Randomizer $rng, int $count, int $spread_days ): int {
+	private function seed_orphans( Randomizer $rng, int $count, int $spread_days, int $now_gmt ): int {
 		$inserted = 0;
 		for ( $i = 0; $i < $count; $i++ ) {
-			if ( $this->insert_orphan( $rng, $spread_days, $i ) ) {
+			if ( $this->insert_orphan( $rng, $spread_days, $i, $now_gmt ) ) {
 				$inserted++;
 			}
 		}
@@ -171,16 +178,17 @@ final class RevisionSeeder {
 	/**
 	 * Insert one revision row (or autosave) for a given parent post.
 	 *
-	 * @param Randomizer $rng              Deterministic PRNG.
-	 * @param WP_Post    $parent_post           Parent post.
-	 * @param int        $index            1-based revision index for this parent.
-	 * @param int        $spread_days      Historical date window in days.
-	 * @param bool       $is_autosave      Whether to use the autosave post_name pattern.
+	 * @param Randomizer $rng         Deterministic PRNG.
+	 * @param WP_Post    $parent_post Parent post.
+	 * @param int        $index       1-based revision index for this parent.
+	 * @param int        $spread_days Historical date window in days.
+	 * @param bool       $is_autosave Whether to use the autosave post_name pattern.
+	 * @param int        $now_gmt     Anchor timestamp (seconds since epoch, UTC).
 	 */
-	private function insert_revision( Randomizer $rng, WP_Post $parent_post, int $index, int $spread_days, bool $is_autosave ): bool {
+	private function insert_revision( Randomizer $rng, WP_Post $parent_post, int $index, int $spread_days, bool $is_autosave, int $now_gmt ): bool {
 		$mutation = $this->generator->mutated_body( $rng, $parent_post->post_content, $index );
 		$title    = $this->generator->mutated_title( $rng, $parent_post->post_title );
-		$date_gmt = $this->historical_date( $rng, $spread_days );
+		$date_gmt = $this->historical_date( $rng, $spread_days, $now_gmt );
 		$suffix   = $is_autosave ? '-autosave-v' : '-revision-v';
 
 		$row_id = wp_insert_post(
@@ -214,10 +222,11 @@ final class RevisionSeeder {
 	 * @param Randomizer $rng         Deterministic PRNG.
 	 * @param int        $spread_days Historical date window in days.
 	 * @param int        $index       0-based orphan index, used to vary post_name.
+	 * @param int        $now_gmt     Anchor timestamp (seconds since epoch, UTC).
 	 */
-	private function insert_orphan( Randomizer $rng, int $spread_days, int $index ): bool {
+	private function insert_orphan( Randomizer $rng, int $spread_days, int $index, int $now_gmt ): bool {
 		$fake_parent_id = 999_000_000 + $index;
-		$date_gmt       = $this->historical_date( $rng, $spread_days );
+		$date_gmt       = $this->historical_date( $rng, $spread_days, $now_gmt );
 
 		$row_id = wp_insert_post(
 			// phpcs:ignore Apermo.DataStructures.ArrayComplexity.TooManyKeys -- wp_insert_post args are a WP API shape.
@@ -244,13 +253,14 @@ final class RevisionSeeder {
 	}
 
 	/**
-	 * Pick a GMT timestamp within the last $spread_days days.
+	 * Pick a GMT timestamp within the last $spread_days days, anchored on $now_gmt.
 	 *
 	 * @param Randomizer $rng         Deterministic PRNG.
 	 * @param int        $spread_days Window size in days.
+	 * @param int        $now_gmt     Anchor timestamp (seconds since epoch, UTC).
 	 */
-	private function historical_date( Randomizer $rng, int $spread_days ): string {
+	private function historical_date( Randomizer $rng, int $spread_days, int $now_gmt ): string {
 		$offset = $rng->int_between( 0, $spread_days * 86_400 );
-		return \gmdate( 'Y-m-d H:i:s', \time() - $offset );
+		return \gmdate( 'Y-m-d H:i:s', $now_gmt - $offset );
 	}
 }

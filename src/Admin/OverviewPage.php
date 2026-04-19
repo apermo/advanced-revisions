@@ -97,6 +97,9 @@ final class OverviewPage {
 		$deleter = new RevisionDeleter( new RevisionRepository() );
 		$result  = $deleter->delete_for_parents( $selected );
 
+		// Invalidate aggregate caches so the dashboard widget reflects reality.
+		DashboardWidget::flush();
+
 		wp_safe_redirect(
 			self::page_url(
 				[

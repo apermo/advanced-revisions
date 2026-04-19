@@ -4,12 +4,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Unit-test stubs for WP classes used by the code under test. Only declared
-// when WP itself is not loaded (integration tests provide the real classes).
-if ( ! class_exists( 'WP_Post' ) ) {
-	require_once __DIR__ . '/wp-class-stubs.php';
-}
-
 $wp_tests_dir = getenv( 'WP_TESTS_DIR' );
 
 if ( $wp_tests_dir === false ) {
@@ -29,6 +23,11 @@ if ( $wp_tests_dir !== false && is_dir( $wp_tests_dir ) ) {
 	tests_add_filter( 'muplugins_loaded', 'advanced_revisions_tests_load_project' );
 
 	require_once $wp_tests_dir . '/includes/bootstrap.php';
+} else {
+	// No WordPress test suite available — unit tests only. Load minimal stubs
+	// for the WP classes our code-under-test references by type so Brain Monkey
+	// tests can run without a real WP bootstrap.
+	require_once __DIR__ . '/wp-class-stubs.php';
 }
 
 /**

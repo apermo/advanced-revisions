@@ -21,8 +21,6 @@ final class RevisionLimitMetaBox {
 
 	public const NONCE_NAME = 'advanced_revisions_override_nonce';
 
-	public const CAPABILITY = 'edit_others_posts';
-
 	/**
 	 * Register the add/save hooks and expose the meta to REST.
 	 */
@@ -44,7 +42,10 @@ final class RevisionLimitMetaBox {
 					'type'          => 'integer',
 					'single'        => true,
 					'show_in_rest'  => true,
-					'auth_callback' => static fn(): bool => current_user_can( self::CAPABILITY ),
+					'auth_callback' => static function ( bool $allowed, string $meta_key, int $object_id ): bool {
+						unset( $allowed, $meta_key );
+						return current_user_can( 'edit_post', $object_id );
+					},
 				],
 			);
 		}
@@ -110,7 +111,7 @@ final class RevisionLimitMetaBox {
 			return;
 		}
 
-		if ( ! current_user_can( self::CAPABILITY, $post_id ) ) {
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
 
