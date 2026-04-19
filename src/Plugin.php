@@ -7,6 +7,7 @@ namespace Apermo\AdvancedRevisions;
 use Apermo\AdvancedRevisions\Admin\PostListColumn;
 use Apermo\AdvancedRevisions\Admin\SettingsPage;
 use Apermo\AdvancedRevisions\Revisions\LimitService;
+use Apermo\AdvancedRevisions\Revisions\TaxonomyRegistrar;
 
 /**
  * Main plugin class.
@@ -71,6 +72,7 @@ class Plugin {
 	 */
 	public static function boot(): void {
 		LimitService::register();
+		TaxonomyRegistrar::register();
 		if ( is_admin() ) {
 			SettingsPage::register();
 			PostListColumn::register();
