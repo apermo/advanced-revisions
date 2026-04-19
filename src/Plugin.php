@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Apermo\AdvancedRevisions;
 
+use Apermo\AdvancedRevisions\Admin\PostListColumn;
 use Apermo\AdvancedRevisions\Admin\SettingsPage;
 use Apermo\AdvancedRevisions\Revisions\LimitService;
 
@@ -72,6 +73,7 @@ class Plugin {
 		LimitService::register();
 		if ( is_admin() ) {
 			SettingsPage::register();
+			PostListColumn::register();
 		}
 	}
 }

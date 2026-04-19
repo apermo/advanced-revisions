@@ -58,6 +58,7 @@
                 <element value="num"/>
                 <element value="raw"/>
                 <element value="rng"/>
+                <element value="url"/>
             </property>
         </properties>
     </rule>
