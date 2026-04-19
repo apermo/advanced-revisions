@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: Advanced Revisions – Dev Fixtures
- * Description: Test custom post types and seed WP-CLI commands for developing
- *              Advanced Revisions. DO NOT INSTALL IN PRODUCTION.
- * Version:     0.1.0
+ * Plugin Name:  Advanced Revisions – Dev Fixtures
+ * Description:  Test custom post types and seed WP-CLI commands for developing
+ *               Advanced Revisions. DO NOT INSTALL IN PRODUCTION.
+ * Version:      0.1.0
  * Requires PHP: 8.1
- * License:     GPL-2.0-or-later
+ * License:      GPL-2.0-or-later
  */
 
 declare(strict_types=1);
