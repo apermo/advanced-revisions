@@ -9,6 +9,7 @@ use Apermo\AdvancedRevisions\Revisions\RevisionRepository;
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * Tests for RevisionDeleter — verifies protection is honored and deletion
@@ -85,7 +86,18 @@ final class RevisionDeleterTest extends TestCase {
 	 */
 	public function test_delete_respects_protection_flags(): void {
 		Functions\when( 'wp_get_object_terms' )->alias(
-			static fn( int $id ): array => $id === 11 ? [ 500 ] : [],
+			// phpcs:ignore Universal.FunctionDeclarations.NoLongClosures.ExceedsMaximum
+			static function ( array $ids ): array {
+				$rows = [];
+				if ( \in_array( 11, $ids, true ) ) {
+					// phpcs:ignore SlevomatCodingStandard.PHP.ForbiddenClasses.ForbiddenClass
+					$row_data            = new stdClass();
+					$row_data->object_id = 11;
+					$row_data->term_id   = 500;
+					$rows[]              = $row_data;
+				}
+				return $rows;
+			},
 		);
 		Functions\when( 'get_term_meta' )->justReturn( true );
 		Functions\when( 'wp_delete_post_revision' )->justReturn( 1 );
@@ -108,7 +120,18 @@ final class RevisionDeleterTest extends TestCase {
 	 */
 	public function test_preview_reports_counts_without_deleting(): void {
 		Functions\when( 'wp_get_object_terms' )->alias(
-			static fn( int $id ): array => $id === 10 ? [ 500 ] : [],
+			// phpcs:ignore Universal.FunctionDeclarations.NoLongClosures.ExceedsMaximum
+			static function ( array $ids ): array {
+				$rows = [];
+				if ( \in_array( 10, $ids, true ) ) {
+					// phpcs:ignore SlevomatCodingStandard.PHP.ForbiddenClasses.ForbiddenClass
+					$row_data            = new stdClass();
+					$row_data->object_id = 10;
+					$row_data->term_id   = 500;
+					$rows[]              = $row_data;
+				}
+				return $rows;
+			},
 		);
 		Functions\when( 'get_term_meta' )->justReturn( true );
 		Functions\expect( 'wp_delete_post_revision' )->never();

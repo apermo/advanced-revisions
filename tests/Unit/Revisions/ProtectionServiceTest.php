@@ -9,6 +9,7 @@ use Apermo\AdvancedRevisions\Revisions\TaxonomyRegistrar;
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * Tests for ProtectionService::filter_deletable().
@@ -39,9 +40,20 @@ final class ProtectionServiceTest extends TestCase {
 	 */
 	private function stub_tags( array $terms_by_revision, array $protected_by_term ): void {
 		Functions\when( 'wp_get_object_terms' )->alias(
-			static function ( int $revision_id, string $taxonomy, array $args ) use ( $terms_by_revision ): array {
+			// phpcs:ignore Universal.FunctionDeclarations.NoLongClosures.ExceedsMaximum
+			static function ( array $object_ids, string $taxonomy, array $args ) use ( $terms_by_revision ): array {
 				unset( $taxonomy, $args );
-				return $terms_by_revision[ $revision_id ] ?? [];
+				$rows = [];
+				foreach ( $object_ids as $object_id ) {
+					foreach ( $terms_by_revision[ $object_id ] ?? [] as $term_id ) {
+						// phpcs:ignore SlevomatCodingStandard.PHP.ForbiddenClasses.ForbiddenClass
+						$row_data            = new stdClass();
+						$row_data->object_id = $object_id;
+						$row_data->term_id   = $term_id;
+						$rows[]              = $row_data;
+					}
+				}
+				return $rows;
 			},
 		);
 		Functions\when( 'get_term_meta' )->alias(

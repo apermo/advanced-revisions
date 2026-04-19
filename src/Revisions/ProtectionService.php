@@ -91,24 +91,39 @@ final class ProtectionService {
 	}
 
 	/**
-	 * Fetch term IDs for each revision in one call. Revisions without any
-	 * revision_tag terms are omitted from the result.
+	 * Fetch term IDs grouped by revision in a single batched query.
+	 *
+	 * Passes the whole revision-ID array to wp_get_object_terms() with
+	 * `all_with_object_id` so we get back rows that know which revision they
+	 * belong to — avoiding the N+1 pattern a per-revision loop would cause.
+	 * Revisions without any revision_tag terms are omitted from the result.
 	 *
 	 * @param array<int, int> $revision_ids Revision IDs.
 	 * @return array<int, array<int, int>>
 	 */
 	private static function terms_by_revision( array $revision_ids ): array {
+		$rows = wp_get_object_terms(
+			$revision_ids,
+			TaxonomyRegistrar::TAXONOMY,
+			[ 'fields' => 'all_with_object_id' ],
+		);
+
+		if ( ! \is_array( $rows ) || $rows === [] ) {
+			return [];
+		}
+
 		$result = [];
-		foreach ( $revision_ids as $revision_id ) {
-			$terms = wp_get_object_terms(
-				$revision_id,
-				TaxonomyRegistrar::TAXONOMY,
-				[ 'fields' => 'ids' ],
-			);
-			if ( ! \is_array( $terms ) || $terms === [] ) {
+		foreach ( $rows as $row_data ) {
+			// @phpstan-ignore-next-line property.notFound -- all_with_object_id injects an object_id on each WP_Term row.
+			$object_id = isset( $row_data->object_id ) ? (int) $row_data->object_id : 0;
+			$term_id   = $row_data->term_id;
+			if ( $object_id === 0 || $term_id === 0 ) {
 				continue;
 			}
-			$result[ $revision_id ] = \array_map( 'intval', $terms );
+			if ( ! isset( $result[ $object_id ] ) ) {
+				$result[ $object_id ] = [];
+			}
+			$result[ $object_id ][] = $term_id;
 		}
 		return $result;
 	}
