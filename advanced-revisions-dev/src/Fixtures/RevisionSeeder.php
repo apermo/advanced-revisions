@@ -207,8 +207,7 @@ final class RevisionSeeder {
 			true,
 		);
 
-		// @phpstan-ignore-next-line smaller.alwaysFalse -- wp_insert_post can return 0 on silent failure.
-		if ( is_wp_error( $row_id ) || $row_id <= 0 ) {
+		if ( is_wp_error( $row_id ) ) {
 			return false;
 		}
 
@@ -243,8 +242,7 @@ final class RevisionSeeder {
 			true,
 		);
 
-		// @phpstan-ignore-next-line smaller.alwaysFalse -- wp_insert_post can return 0 on silent failure.
-		if ( is_wp_error( $row_id ) || $row_id <= 0 ) {
+		if ( is_wp_error( $row_id ) ) {
 			return false;
 		}
 

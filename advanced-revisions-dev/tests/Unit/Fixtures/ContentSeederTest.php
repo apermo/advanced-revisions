@@ -220,10 +220,14 @@ final class ContentSeederTest extends TestCase {
 	}
 
 	/**
-	 * When wp_insert_post silently returns 0, the post is skipped and no meta is written.
+	 * When wp_insert_post returns a WP_Error, the post is skipped and no meta is written.
 	 */
 	public function test_seed_skips_posts_when_wp_insert_post_returns_error(): void {
-		Functions\when( 'wp_insert_post' )->justReturn( 0 );
+		Functions\when( 'wp_insert_post' )->justReturn( 'sentinel-error' );
+		// Treat only the wp_insert_post return as an error; wp_insert_user's int return must stay OK.
+		Functions\when( 'is_wp_error' )->alias(
+			static fn( mixed $value ): bool => $value === 'sentinel-error',
+		);
 
 		$seeder = new ContentSeeder( new ContentGenerator() );
 		$totals = $seeder->seed(

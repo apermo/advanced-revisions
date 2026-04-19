@@ -78,8 +78,7 @@ final class ContentSeeder {
 				$post_data = $this->generator->post( $rng, $post_type, $author_id, $status, $date_gmt );
 				$post_id   = wp_insert_post( $post_data, true );
 
-				// @phpstan-ignore-next-line smaller.alwaysFalse -- wp_insert_post can return 0 on silent failure; PHPStan's stub narrows too aggressively.
-				if ( is_wp_error( $post_id ) || $post_id <= 0 ) {
+				if ( is_wp_error( $post_id ) ) {
 					continue;
 				}
 
@@ -154,7 +153,7 @@ final class ContentSeeder {
 				],
 			);
 
-			if ( is_wp_error( $new_id ) || $new_id <= 0 ) {
+			if ( is_wp_error( $new_id ) ) {
 				continue;
 			}
 			$ids[] = $new_id;
