@@ -4,27 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-GitHub template repository for bootstrapping WordPress plugins and themes. Ships both plugin and theme scaffolding; a `setup.sh` script lets developers choose their mode and configures the project accordingly.
+WordPress plugin adding advanced features for post revisions: configurable limits per post type,
+admin overview, and bulk deletion tools.
 
 **PHP 8.1+ minimum.** Strict types everywhere (`declare(strict_types=1)`).
 
+Derived from [`apermo/template-wordpress`](https://github.com/apermo/template-wordpress).
+
 ## Architecture
 
-### Dual-mode template (plugin + theme)
-
-Both modes coexist in the repo. The `setup.sh` script (see #10) removes the irrelevant set after the developer picks a mode.
-
-**Plugin mode files:** `plugin.php` (main file), `src/Plugin.php`, `uninstall.php`
-**Theme mode files:** `style.css`, `functions.php`, `src/Theme.php`, `templates/`, `parts/`, `assets/`
-**Shared:** `src/` (PSR-4 root), `tests/`, `composer.json`, CI config, DDEV config
+- Main plugin file: `plugin.php`
+- PSR-4 root: `src/` → `Apermo\Advanced_Revisions\`
+- Entry class: `src/Plugin.php` (lifecycle: `activate()`, `deactivate()`, `boot()`)
+- Uninstall hook: `uninstall.php`
 
 ### Key conventions
 
-- PSR-4 autoloading under `src/`
 - Coding standards: `apermo/apermo-coding-standards` (PHPCS)
 - Static analysis: `apermo/phpstan-wordpress-rules` + `szepeviktor/phpstan-wordpress`
 - Testing: PHPUnit + Brain Monkey + Yoast PHPUnit Polyfills
 - Test suites: `tests/Unit/` and `tests/Integration/`
+- E2E: Playwright under `e2e/`
 
 ## Commands
 
@@ -48,11 +48,12 @@ ddev start && ddev orchestrate   # Full WordPress environment
 - Uses `apermo/ddev-orchestrate` addon
 - Project type is `php` (not `wordpress`), so WP-CLI uses a custom `ddev wp` command wrapper
 - WordPress installs into `.ddev/wordpress/` subdirectory (keeps project root clean)
-- `ddev-orchestrate` symlinks the project into the WP plugins/themes directory automatically
+- `ddev-orchestrate` symlinks the project into the WP plugins directory automatically
 
 ## Git Hooks
 
-Pre-commit hook runs PHPCS and PHPStan on staged files. Enable with:
+Pre-commit hook runs PHPCS and PHPStan on staged files. Enabled by default (via `setup.sh`).
+Re-enable with:
 
 ```bash
 git config core.hooksPath .githooks
@@ -66,6 +67,7 @@ git config core.hooksPath .githooks
 - `wp-beta.yml` — Nightly WP beta/RC compatibility check
 - `release.yml` — CHANGELOG-driven releases
 - `pr-validation.yml` — conventional commit and changelog checks
+- `wporg-deploy.yml` — WordPress.org SVN deploy (requires `WPORG_SVN_USERNAME` / `WPORG_SVN_PASSWORD` secrets)
 
 ### Integration test environment
 
@@ -100,7 +102,9 @@ npm run test:e2e
 The `WP_BASE_URL` env var overrides the default DDEV site URL. Authentication
 is handled by `e2e/auth.setup.js` which stores state in `.auth/admin.json`.
 
-## Template Sync (for derived projects)
+## Template Sync
+
+To pull upstream changes from the template:
 
 ```bash
 git remote add template https://github.com/apermo/template-wordpress.git
@@ -108,18 +112,3 @@ git fetch template
 git checkout -b chore/sync-template
 git merge template/main --allow-unrelated-histories
 ```
-
-## Post-setup checklist (for derived projects)
-
-After running `setup.sh` on a new project derived from this template, remind the user to:
-
-- Add the `CODECOV_TOKEN` repository secret (Settings > Secrets > Actions) for code coverage reporting
-
-## Placeholder conventions
-
-The setup script replaces these across all files:
-- `plugin-name` → slug (kebab-case)
-- `Plugin_Name` → PascalCase
-- `PLUGIN_NAME` → UPPER_SNAKE_CASE
-- `plugin_name` → snake_case
-- Placeholder namespace → chosen namespace

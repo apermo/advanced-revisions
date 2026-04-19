@@ -1,44 +1,49 @@
-# template-wordpress
+# Advanced Revisions
 
-[![PHP CI](https://github.com/apermo/template-wordpress/actions/workflows/ci.yml/badge.svg)](https://github.com/apermo/template-wordpress/actions/workflows/ci.yml)
+[![PHP CI](https://github.com/apermo/advanced-revisions/actions/workflows/ci.yml/badge.svg)](https://github.com/apermo/advanced-revisions/actions/workflows/ci.yml)
 [![License: GPL v2+](https://img.shields.io/badge/License-GPLv2+-blue.svg)](LICENSE)
 
-GitHub template repository for bootstrapping WordPress plugins and themes. Ships both plugin and theme scaffolding; a `setup.sh` script lets developers choose their mode and configures the project accordingly.
+Advanced features for WordPress revisions: configurable limits per post type, an admin overview,
+and bulk deletion tools.
+
+> **Status:** v0.1.0 ships project scaffolding only. User-facing features are planned and will be
+> tracked as GitHub issues.
+
+## Planned Features
+
+- Configure the number of revisions kept **per post type** (override `WP_POST_REVISIONS`)
+- Admin overview listing revisions across the site
+- Bulk deletion of revisions (by post type, age, or count)
+- Clean, easy-to-use settings UI
 
 ## Requirements
 
+- WordPress 6.4+
 - PHP 8.1+
-- Composer
-- [DDEV](https://ddev.readthedocs.io/) (for local development)
 
 ## Installation
 
-1. [Create a new repository from this template](https://github.com/apermo/template-wordpress/generate)
-2. Clone your new repository
-3. Run the setup script:
+Until the first tagged release is published, install from source:
 
 ```bash
-bash setup.sh
+git clone https://github.com/apermo/advanced-revisions.git wp-content/plugins/advanced-revisions
+cd wp-content/plugins/advanced-revisions
+composer install --no-dev
 ```
 
-The script prompts for:
-- **Slug** (kebab-case, e.g. `my-plugin`)
-- **Namespace** (e.g. `Apermo\MyPlugin`)
-- **Composer package name**
-- **Mode** (`plugin` or `theme`)
-
-It replaces all placeholders, removes irrelevant mode files, configures DDEV, and optionally sets up GitHub labels and branch protection.
+Then activate **Advanced Revisions** from the WordPress Plugins screen.
 
 ## Development
 
 ```bash
 composer install
-composer cs              # Run PHPCS
-composer cs:fix          # Fix PHPCS violations
-composer analyse         # Run PHPStan
-composer test            # Run all tests
-composer test:unit       # Run unit tests only
+composer cs               # Run PHPCS
+composer cs:fix           # Fix PHPCS violations
+composer analyse          # Run PHPStan
+composer test             # Run all tests
+composer test:unit        # Run unit tests only
 composer test:integration # Run integration tests only
+npm run test:e2e          # Run Playwright E2E tests
 ```
 
 ### Local WordPress Environment
@@ -47,7 +52,8 @@ composer test:integration # Run integration tests only
 ddev start && ddev orchestrate
 ```
 
-Uses [ddev-orchestrate](https://github.com/apermo/ddev-orchestrate) to download WordPress, create `wp-config.php`, install, and activate the plugin/theme.
+Uses [ddev-orchestrate](https://github.com/apermo/ddev-orchestrate) to download WordPress, create
+`wp-config.php`, install, and activate the plugin.
 
 ### Git Hooks
 
@@ -57,16 +63,10 @@ Enable the pre-commit hook (PHPCS + PHPStan on staged files):
 git config core.hooksPath .githooks
 ```
 
-## Template Sync
+## Contributing
 
-To pull upstream template changes into a derived project:
-
-```bash
-git remote add template https://github.com/apermo/template-wordpress.git
-git fetch template
-git checkout -b chore/sync-template
-git merge template/main --allow-unrelated-histories
-```
+Issues and pull requests welcome. Feature planning happens in GitHub issues — please check there
+before starting work.
 
 ## License
 

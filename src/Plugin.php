@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Plugin_Name;
+namespace Apermo\Advanced_Revisions;
 
 /**
  * Main plugin class.

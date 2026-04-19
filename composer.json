@@ -1,6 +1,6 @@
 {
-    "name": "apermo/plugin-name",
-    "description": "A WordPress plugin-name plugin.",
+    "name": "apermo/advanced-revisions",
+    "description": "Advanced features for WordPress revisions: configurable limits per post type, admin overview, and bulk deletion tools.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "authors": [
@@ -23,12 +23,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Plugin_Name\\": "src/"
+            "Apermo\\Advanced_Revisions\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Plugin_Name\\Tests\\": "tests/"
+            "Apermo\\Advanced_Revisions\\Tests\\": "tests/"
         }
     },
     "scripts": {

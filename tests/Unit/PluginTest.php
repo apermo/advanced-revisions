@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Plugin_Name\Tests\Unit;
+namespace Apermo\Advanced_Revisions\Tests\Unit;
 
+use Apermo\Advanced_Revisions\Plugin;
 use Brain\Monkey;
 use Brain\Monkey\Functions;
 use PHPUnit\Framework\TestCase;
-use Plugin_Name\Plugin;
 
 /**
  * Tests for the Plugin class.
