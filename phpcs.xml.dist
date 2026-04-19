@@ -10,6 +10,7 @@
     <exclude-pattern>vendor/*</exclude-pattern>
     <exclude-pattern>node_modules/*</exclude-pattern>
     <exclude-pattern>tests/wp-class-stubs.php</exclude-pattern>
+    <exclude-pattern>tests/Fixtures/WpdbDouble.php</exclude-pattern>
 
     <arg name="extensions" value="php"/>
 
@@ -53,6 +54,8 @@
                 <element value="a"/>
                 <element value="b"/>
                 <element value="key"/>
+                <element value="cap"/>
+                <element value="cb"/>
                 <element value="min"/>
                 <element value="max"/>
                 <element value="num"/>

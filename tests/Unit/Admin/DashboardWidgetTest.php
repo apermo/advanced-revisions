@@ -80,6 +80,82 @@ final class DashboardWidgetTest extends TestCase {
 	}
 
 	/**
+	 * The add_widget helper registers the widget when capability passes.
+	 */
+	public function test_add_widget_registers_when_capable(): void {
+		Functions\when( 'current_user_can' )->justReturn( true );
+		Functions\when( '__' )->returnArg();
+		$called = false;
+		Functions\when( 'wp_add_dashboard_widget' )->alias(
+			static function () use ( &$called ): void {
+				$called = true;
+			},
+		);
+
+		DashboardWidget::add_widget();
+
+		self::assertTrue( $called );
+	}
+
+	/**
+	 * Empty-state copy is emitted when no revisions exist.
+	 */
+	public function test_render_empty_state(): void {
+		Functions\when( '__' )->returnArg();
+		Functions\when( 'esc_html__' )->returnArg();
+		Functions\when( 'get_transient' )->justReturn(
+			[
+				'total'     => 0,
+				'est_bytes' => 0,
+				'top'       => [],
+			],
+		);
+
+		\ob_start();
+		DashboardWidget::render();
+		$output = (string) \ob_get_clean();
+
+		self::assertStringContainsString( 'No stored revisions', $output );
+	}
+
+	/**
+	 * Populated stats render revision totals and the top-posts list.
+	 */
+	public function test_render_populated_stats(): void {
+		Functions\when( '__' )->returnArg();
+		Functions\when( 'esc_html' )->returnArg();
+		Functions\when( 'esc_html__' )->returnArg();
+		Functions\when( 'number_format_i18n' )->returnArg();
+		Functions\when( 'size_format' )->returnArg();
+		Functions\when( '_n' )->alias(
+			static fn( string $single, string $plural, int $count ): string => $count === 1 ? $single : $plural,
+		);
+		Functions\when( 'get_transient' )->justReturn(
+			[
+				'total'     => 42,
+				'est_bytes' => 1024,
+				'top'       => [
+					[
+						'title' => 'About',
+						'count' => 10,
+					],
+					[
+						'title' => 'Contact',
+						'count' => 5,
+					],
+				],
+			],
+		);
+
+		\ob_start();
+		DashboardWidget::render();
+		$output = (string) \ob_get_clean();
+
+		self::assertStringContainsString( 'About', $output );
+		self::assertStringContainsString( 'Contact', $output );
+	}
+
+	/**
 	 * Malformed cached data (missing keys) is treated as a miss.
 	 */
 	public function test_stats_treats_malformed_cache_as_miss(): void {

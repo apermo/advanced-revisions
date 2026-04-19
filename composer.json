@@ -29,6 +29,7 @@
     "autoload-dev": {
         "psr-4": {
             "Apermo\\AdvancedRevisions\\Tests\\": "tests/",
+            "Apermo\\AdvancedRevisions\\Tests\\Fixtures\\": "tests/Fixtures/",
             "Apermo\\AdvancedRevisionsDev\\": "advanced-revisions-dev/src/",
             "Apermo\\AdvancedRevisionsDev\\Tests\\": "advanced-revisions-dev/tests/"
         }

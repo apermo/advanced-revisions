@@ -128,6 +128,118 @@ final class SettingsPageTest extends TestCase {
 	}
 
 	/**
+	 * The add_page helper registers under Settings with the expected slug + capability.
+	 */
+	public function test_add_page_registers_under_settings(): void {
+		Functions\when( '__' )->returnArg();
+		$captured = [];
+		Functions\when( 'add_options_page' )->alias(
+			static function ( string $title, string $menu, string $cap, string $slug, $cb ) use ( &$captured ): void {
+				unset( $cb );
+				$captured = [ $title, $menu, $cap, $slug ];
+			},
+		);
+
+		SettingsPage::add_page();
+
+		self::assertSame( SettingsPage::CAPABILITY, $captured[2] );
+		self::assertSame( SettingsPage::MENU_SLUG, $captured[3] );
+	}
+
+	/**
+	 * Settings API is wired via register_settings.
+	 */
+	public function test_register_settings_wires_settings_api(): void {
+		$this->stub_post_types( [ 'post', 'page' ] );
+		Functions\when( '__' )->returnArg();
+
+		$register = 0;
+		$section  = 0;
+		$field    = 0;
+		Functions\when( 'register_setting' )->alias(
+			static function () use ( &$register ): void {
+				$register++;
+			},
+		);
+		Functions\when( 'add_settings_section' )->alias(
+			static function () use ( &$section ): void {
+				$section++;
+			},
+		);
+		Functions\when( 'add_settings_field' )->alias(
+			static function () use ( &$field ): void {
+				$field++;
+			},
+		);
+
+		SettingsPage::register_settings();
+
+		self::assertSame( 1, $register );
+		self::assertSame( 1, $section );
+		self::assertSame( 2, $field );
+	}
+
+	/**
+	 * Section-intro rendering prints a description paragraph.
+	 */
+	public function test_render_section_intro_prints_description(): void {
+		Functions\when( 'esc_html__' )->returnArg();
+
+		\ob_start();
+		SettingsPage::render_section_intro();
+		$output = (string) \ob_get_clean();
+
+		self::assertStringContainsString( '<p>', $output );
+		self::assertStringContainsString( 'revisions', \strtolower( $output ) );
+	}
+
+	/**
+	 * Limit-field rendering prints a number input for the given post type.
+	 */
+	public function test_render_limit_field_prints_input(): void {
+		Functions\when( 'get_post_meta' )->justReturn( '' );
+		Functions\when( 'get_option' )->justReturn( [] );
+		Functions\when( 'esc_attr' )->returnArg();
+
+		\ob_start();
+		SettingsPage::render_limit_field( [ 'post_type' => 'post' ] );
+		$output = (string) \ob_get_clean();
+
+		self::assertStringContainsString( '<input type="number"', $output );
+	}
+
+	/**
+	 * Page rendering bails when user lacks capability.
+	 */
+	public function test_render_page_bails_without_capability(): void {
+		Functions\when( 'current_user_can' )->justReturn( false );
+
+		\ob_start();
+		SettingsPage::render_page();
+		$output = (string) \ob_get_clean();
+
+		self::assertSame( '', $output );
+	}
+
+	/**
+	 * Page rendering emits the standard wrap + form when capable.
+	 */
+	public function test_render_page_emits_wrap_and_form(): void {
+		Functions\when( 'current_user_can' )->justReturn( true );
+		Functions\when( 'esc_html__' )->returnArg();
+		Functions\when( 'settings_fields' )->justReturn( '' );
+		Functions\when( 'do_settings_sections' )->justReturn( '' );
+		Functions\when( 'submit_button' )->justReturn( '' );
+
+		\ob_start();
+		SettingsPage::render_page();
+		$output = (string) \ob_get_clean();
+
+		self::assertStringContainsString( '<div class="wrap">', $output );
+		self::assertStringContainsString( '<form', $output );
+	}
+
+	/**
 	 * Non-array inputs normalize to an empty limits map (never crash).
 	 */
 	public function test_sanitize_handles_non_array_input(): void {
