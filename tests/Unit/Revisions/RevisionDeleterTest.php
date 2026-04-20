@@ -23,6 +23,7 @@ final class RevisionDeleterTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		Monkey\setUp();
+		Functions\when( 'update_termmeta_cache' )->justReturn( [] );
 	}
 
 	/**

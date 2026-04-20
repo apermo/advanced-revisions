@@ -147,10 +147,21 @@ final class ProtectionService {
 	/**
 	 * Builds a lookup of term_id → true for terms flagged protected.
 	 *
+	 * Primes the termmeta cache with a single bulk query before the loop so
+	 * subsequent get_term_meta() calls hit the object cache. Without priming,
+	 * a cold cache triggers one SELECT per term — N+1 on bulk-delete flows
+	 * where every revision's tags get inspected.
+	 *
 	 * @param array<int, int> $term_ids Unique term IDs to inspect.
 	 * @return array<int, bool>
 	 */
 	private static function protected_term_lookup( array $term_ids ): array {
+		if ( $term_ids === [] ) {
+			return [];
+		}
+
+		update_termmeta_cache( $term_ids );
+
 		$lookup = [];
 		foreach ( $term_ids as $term_id ) {
 			$flag = get_term_meta( $term_id, TaxonomyRegistrar::PROTECTED_META, true );
