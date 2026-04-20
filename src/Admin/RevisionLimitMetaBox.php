@@ -27,7 +27,10 @@ final class RevisionLimitMetaBox {
 	public static function register(): void {
 		add_action( 'add_meta_boxes', [ self::class, 'add_meta_box' ] );
 		add_action( 'save_post', [ self::class, 'save' ], 10, 2 );
-		add_action( 'init', [ self::class, 'register_post_meta' ] );
+		// wp_loaded runs after every plugin's init, so revisable_post_types()
+		// inside register_post_meta() sees CPTs registered at any init priority
+		// (plugins registering at init:10 after ours would otherwise be missed).
+		add_action( 'wp_loaded', [ self::class, 'register_post_meta' ] );
 	}
 
 	/**
