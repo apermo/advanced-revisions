@@ -260,7 +260,10 @@ final class OverviewPage {
 
 		echo '<table class="wp-list-table widefat fixed striped">';
 		echo '<thead><tr>';
-		echo '<td class="manage-column column-cb check-column"><input type="checkbox" id="cb-select-all-1" /></td>';
+		echo '<td class="manage-column column-cb check-column">';
+		echo '<label class="screen-reader-text" for="cb-select-all-1">' . esc_html__( 'Select all posts', 'advanced-revisions' ) . '</label>';
+		echo '<input type="checkbox" id="cb-select-all-1" />';
+		echo '</td>';
 		echo '<th scope="col">' . esc_html__( 'Title', 'advanced-revisions' ) . '</th>';
 		echo '<th scope="col">' . esc_html__( 'Type', 'advanced-revisions' ) . '</th>';
 		echo '<th scope="col">' . esc_html__( 'Revisions', 'advanced-revisions' ) . '</th>';
@@ -289,9 +292,19 @@ final class OverviewPage {
 	private static function render_row( array $row_data ): void {
 		$edit_link = (string) get_edit_post_link( $row_data['id'] );
 
+		$checkbox_id = 'cb-select-' . (int) $row_data['id'];
+
 		echo '<tr>';
 		\printf(
-			'<th class="check-column"><input type="checkbox" name="ar_parent_ids[]" value="%s" /></th>',
+			'<th class="check-column"><label class="screen-reader-text" for="%1$s">%2$s</label><input type="checkbox" id="%1$s" name="ar_parent_ids[]" value="%3$s" /></th>',
+			esc_attr( $checkbox_id ),
+			esc_html(
+				\sprintf(
+					/* translators: %s: post title */
+					__( 'Select %s', 'advanced-revisions' ),
+					$row_data['title'] !== '' ? $row_data['title'] : __( '(no title)', 'advanced-revisions' ),
+				),
+			),
 			esc_attr( (string) $row_data['id'] ),
 		);
 
