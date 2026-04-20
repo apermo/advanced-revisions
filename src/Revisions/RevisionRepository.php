@@ -19,6 +19,15 @@ class RevisionRepository {
 	public const DEFAULT_PER_PAGE = 20;
 
 	/**
+	 * Parent post_status values the overview considers. Applied identically in
+	 * paginated() and total_parents() so the paginator denominator matches the
+	 * row query — orphan/trash/auto-draft parents are excluded from both.
+	 *
+	 * @var list<string>
+	 */
+	private const OVERVIEW_STATUSES = [ 'publish', 'draft', 'pending', 'private', 'future' ];
+
+	/**
 	 * Returns paginated rows for the overview table.
 	 *
 	 * Each row: parent post ID, title, type, author ID, revision count,
@@ -37,9 +46,14 @@ class RevisionRepository {
 		$limit  = \max( 1, \min( 500, $per_page ) );
 		$offset = \max( 0, ( $page - 1 ) * $limit );
 		// Literal LIKE pattern; no user input to escape.
-		$autosave_like = '-autosave-%';
+		$autosave_like    = '-autosave-%';
+		$status_in_clause = '(' . \implode( ',', \array_fill( 0, \count( self::OVERVIEW_STATUSES ), '%s' ) ) . ')';
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- direct aggregation is the purpose of this helper; callers cache.
+		// Non-aggregated p.* columns are listed in GROUP BY alongside p.ID so the
+		// query is portable to MySQL configurations with ONLY_FULL_GROUP_BY, which
+		// do not universally honor functional-dependency detection (MariaDB, older
+		// MySQL 5.7, managed hosts with custom sql_mode).
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- {$status_in_clause} is a fixed %s repeater over OVERVIEW_STATUSES; merged args feed wpdb::prepare.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT p.ID, p.post_title, p.post_type, p.post_author,
@@ -51,19 +65,18 @@ class RevisionRepository {
 					AND r.post_type = 'revision'
 					AND r.post_name NOT LIKE CONCAT(p.ID, %s)
 				WHERE p.post_type != 'revision'
-					AND p.post_status IN ('publish', 'draft', 'pending', 'private', 'future')
-				GROUP BY p.ID
+					AND p.post_status IN {$status_in_clause}
+				GROUP BY p.ID, p.post_title, p.post_type, p.post_author
 				ORDER BY revision_count DESC, p.ID ASC
 				LIMIT %d OFFSET %d",
-				[
-					$wpdb->posts,
-					$wpdb->posts,
-					$autosave_like,
-					$limit,
-					$offset,
-				],
+				\array_merge(
+					[ $wpdb->posts, $wpdb->posts, $autosave_like ],
+					self::OVERVIEW_STATUSES,
+					[ $limit, $offset ],
+				),
 			),
 		);
+		// phpcs:enable
 
 		if ( ! \is_array( $rows ) ) {
 			return [];
@@ -85,6 +98,11 @@ class RevisionRepository {
 
 	/**
 	 * Counts parent posts with at least one revision — used for paginator.
+	 *
+	 * Joins the parent row and mirrors paginated()'s post_type + post_status
+	 * filters so the paginator denominator matches the numerator: orphan
+	 * revisions (parent deleted) and parents in trash/auto-draft don't inflate
+	 * the page count.
 	 */
 	public function total_parents(): int {
 		global $wpdb;
@@ -93,21 +111,26 @@ class RevisionRepository {
 		}
 
 		// Literal LIKE pattern; no user input to escape.
-		$autosave_like = '-autosave-%';
+		$autosave_like    = '-autosave-%';
+		$status_in_clause = '(' . \implode( ',', \array_fill( 0, \count( self::OVERVIEW_STATUSES ), '%s' ) ) . ')';
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- aggregation count; cached per-request.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- {$status_in_clause} is a fixed %s repeater over OVERVIEW_STATUSES; merged args feed wpdb::prepare.
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(DISTINCT r.post_parent)
 					FROM %i r
+					INNER JOIN %i p ON p.ID = r.post_parent
 					WHERE r.post_type = 'revision'
-						AND r.post_name NOT LIKE CONCAT(r.post_parent, %s)",
-				[
-					$wpdb->posts,
-					$autosave_like,
-				],
+						AND r.post_name NOT LIKE CONCAT(r.post_parent, %s)
+						AND p.post_type != 'revision'
+						AND p.post_status IN {$status_in_clause}",
+				\array_merge(
+					[ $wpdb->posts, $wpdb->posts, $autosave_like ],
+					self::OVERVIEW_STATUSES,
+				),
 			),
 		);
+		// phpcs:enable
 
 		return (int) $count;
 	}
