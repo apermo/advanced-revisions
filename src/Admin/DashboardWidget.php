@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Apermo\AdvancedRevisions\Admin;
 
+use wpdb;
+
 /**
  * Registers a dashboard widget that surfaces revision-bloat stats so admins
  * notice it without visiting a dedicated page.
@@ -123,6 +125,10 @@ final class DashboardWidget {
 	/**
 	 * Runs the aggregation queries.
 	 *
+	 * Every query excludes autosaves via the `post_name NOT LIKE '<parent>-autosave-%'`
+	 * pattern so the widget totals match what OverviewPage and PostListColumn
+	 * display — both of which already exclude autosaves.
+	 *
 	 * @return array{total:int, est_bytes:int, top:array<int, array{title:string, count:int}>}
 	 */
 	private static function compute(): array {
@@ -136,54 +142,88 @@ final class DashboardWidget {
 			];
 		}
 
+		return [
+			'total'     => self::compute_total( $wpdb ),
+			'est_bytes' => self::compute_est_bytes( $wpdb ),
+			'top'       => self::compute_top_posts( $wpdb ),
+		];
+	}
+
+	/**
+	 * Counts every non-autosave revision row site-wide.
+	 *
+	 * @param wpdb $wpdb WordPress database abstraction.
+	 */
+	private static function compute_total( wpdb $wpdb ): int {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- aggregation query; cached in transient.
-		$total = (int) $wpdb->get_var(
+		return (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM %i WHERE post_type = 'revision'",
-				[ $wpdb->posts ],
+				"SELECT COUNT(*) FROM %i
+					WHERE post_type = 'revision'
+						AND post_name NOT LIKE CONCAT(post_parent, %s)",
+				[ $wpdb->posts, '-autosave-%' ],
 			),
 		);
+	}
 
+	/**
+	 * Estimates database footprint of stored revisions via SUM(LENGTH(post_content)).
+	 *
+	 * @param wpdb $wpdb WordPress database abstraction.
+	 */
+	private static function compute_est_bytes( wpdb $wpdb ): int {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- aggregation query; cached in transient.
-		$est_bytes = (int) $wpdb->get_var(
+		return (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COALESCE(SUM(LENGTH(post_content)), 0) FROM %i WHERE post_type = 'revision'",
-				[ $wpdb->posts ],
+				"SELECT COALESCE(SUM(LENGTH(post_content)), 0) FROM %i
+					WHERE post_type = 'revision'
+						AND post_name NOT LIKE CONCAT(post_parent, %s)",
+				[ $wpdb->posts, '-autosave-%' ],
 			),
 		);
+	}
 
+	/**
+	 * Returns the top five parent posts ranked by non-autosave revision count.
+	 *
+	 * p.post_title is listed in GROUP BY so the query stays portable to MySQL
+	 * configurations with ONLY_FULL_GROUP_BY that don't honor
+	 * functional-dependency detection (MariaDB, managed hosts).
+	 *
+	 * @param wpdb $wpdb WordPress database abstraction.
+	 * @return array<int, array{title:string, count:int}>
+	 */
+	private static function compute_top_posts( wpdb $wpdb ): array {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- aggregation query; cached in transient.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT p.post_title, COUNT(r.ID) AS revision_count
 					FROM %i p
 					INNER JOIN %i r
-						ON r.post_parent = p.ID AND r.post_type = 'revision'
+						ON r.post_parent = p.ID
+						AND r.post_type = 'revision'
+						AND r.post_name NOT LIKE CONCAT(p.ID, %s)
 					WHERE p.post_type != 'revision'
-					GROUP BY p.ID
+					GROUP BY p.ID, p.post_title
 					ORDER BY revision_count DESC
 					LIMIT 5",
-				[ $wpdb->posts, $wpdb->posts ],
+				[ $wpdb->posts, $wpdb->posts, '-autosave-%' ],
 			),
 		);
 
 		$top_posts = [];
-		if ( \is_array( $rows ) ) {
-			foreach ( $rows as $row_data ) {
-				if ( ! isset( $row_data->post_title, $row_data->revision_count ) ) {
-					continue;
-				}
-				$top_posts[] = [
-					'title' => (string) $row_data->post_title,
-					'count' => (int) $row_data->revision_count,
-				];
-			}
+		if ( ! \is_array( $rows ) ) {
+			return $top_posts;
 		}
-
-		return [
-			'total'     => $total,
-			'est_bytes' => $est_bytes,
-			'top'       => $top_posts,
-		];
+		foreach ( $rows as $row_data ) {
+			if ( ! isset( $row_data->post_title, $row_data->revision_count ) ) {
+				continue;
+			}
+			$top_posts[] = [
+				'title' => (string) $row_data->post_title,
+				'count' => (int) $row_data->revision_count,
+			];
+		}
+		return $top_posts;
 	}
 }
