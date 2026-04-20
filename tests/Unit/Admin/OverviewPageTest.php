@@ -33,6 +33,9 @@ final class OverviewPageTest extends TestCase {
 		Functions\when( 'sanitize_text_field' )->returnArg();
 		Functions\when( 'wp_unslash' )->returnArg();
 		Functions\when( 'current_user_can' )->justReturn( true );
+		// required_capability() runs apply_filters; return the default value
+		// unchanged so tests exercise the realistic path.
+		Functions\when( 'apply_filters' )->returnArg( 2 );
 		Functions\when( 'admin_url' )->alias(
 			static fn( string $path = '' ): string => '/wp-admin/' . $path,
 		);
@@ -202,15 +205,51 @@ final class OverviewPageTest extends TestCase {
 			OverviewPage::NONCE_NAME => 'valid',
 		];
 		Functions\when( 'wp_verify_nonce' )->justReturn( 1 );
-		$redirected_to = '';
+		// wp_safe_redirect() is followed by exit; throwing from the stub
+		// short-circuits that exit the same way the live request would end.
 		Functions\when( 'wp_safe_redirect' )->alias(
-			static function ( string $url ) use ( &$redirected_to ): void {
-				$redirected_to = $url;
+			static function ( string $url ): void {
+				throw new RuntimeException( $url ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- test-only rethrow carrying the redirect URL for assertions.
 			},
 		);
 
-		OverviewPage::handle_bulk_post();
+		try {
+			OverviewPage::handle_bulk_post();
+			self::fail( 'Expected wp_safe_redirect to short-circuit via exception.' );
+		} catch ( RuntimeException $redirect ) {
+			self::assertStringContainsString( 'ar_bulk=empty', $redirect->getMessage() );
+		}
+	}
 
-		self::assertStringContainsString( 'ar_bulk=empty', $redirected_to );
+	/**
+	 * Verifies the bulk-post handler drops unauthorized parents and reports
+	 * the denied count instead of deleting their revisions.
+	 */
+	public function test_handle_bulk_post_skips_unauthorized_parents(): void {
+		$_POST = [
+			OverviewPage::NONCE_NAME => 'valid',
+			'ar_parent_ids'          => [ '42', '99' ],
+		];
+		Functions\when( 'wp_verify_nonce' )->justReturn( 1 );
+		// The setUp() blanket `current_user_can → true` still authorizes
+		// access to the overview page; here we deny every per-parent
+		// edit_post check so both IDs fall into the `denied` bucket and
+		// the handler bails before running the deleter.
+		Functions\when( 'current_user_can' )->alias(
+			static fn( string $cap ): bool => $cap !== 'edit_post',
+		);
+		Functions\when( 'wp_safe_redirect' )->alias(
+			static function ( string $url ): void {
+				throw new RuntimeException( $url ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- test-only rethrow carrying the redirect URL for assertions.
+			},
+		);
+
+		try {
+			OverviewPage::handle_bulk_post();
+			self::fail( 'Expected redirect.' );
+		} catch ( RuntimeException $redirect ) {
+			self::assertStringContainsString( 'ar_denied=2', $redirect->getMessage() );
+			self::assertStringNotContainsString( 'ar_deleted=', $redirect->getMessage() );
+		}
 	}
 }

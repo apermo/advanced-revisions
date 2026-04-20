@@ -42,8 +42,17 @@ final class RevisionLimitMetaBox {
 					'type'          => 'integer',
 					'single'        => true,
 					'show_in_rest'  => true,
-					'auth_callback' => static function ( bool $allowed, string $meta_key, int $object_id ): bool {
-						unset( $allowed, $meta_key );
+					// WP's map_meta_cap() invokes this filter with 6 positional
+					// args ($allowed, $meta_key, $object_id, $user_id, $cap,
+					// $caps). The variadic $extras catches the trailing ones so
+					// the signature stays compatible as core evolves. We honor
+					// an earlier filter's denial (strict-false $allowed) and
+					// otherwise run the meta-cap check for this post.
+					'auth_callback' => static function ( ?bool $allowed, string $meta_key, int $object_id, ...$extras ): bool {
+						unset( $meta_key, $extras );
+						if ( $allowed === false ) {
+							return false;
+						}
 						return current_user_can( 'edit_post', $object_id );
 					},
 				],

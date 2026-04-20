@@ -15,10 +15,35 @@ use Apermo\AdvancedRevisions\Revisions\RevisionRepository;
 final class OverviewPage {
 
 	public const MENU_SLUG           = 'advanced-revisions-overview';
-	public const REQUIRED_CAPABILITY = 'edit_others_posts';
+	public const REQUIRED_CAPABILITY = 'delete_others_posts';
 	public const NONCE_ACTION        = 'advanced_revisions_overview_bulk';
 	public const NONCE_NAME          = 'advanced_revisions_overview_nonce';
 	public const BULK_FIELD          = 'ar_bulk_delete';
+
+	/**
+	 * Returns the capability required to view or act on the overview.
+	 *
+	 * Runs through the `advanced_revisions_bulk_delete_capability` filter so
+	 * sites with custom role maps can widen or narrow access without editing
+	 * the plugin. Per-parent authorization is additionally enforced in
+	 * handle_bulk_post() via current_user_can('edit_post', $parent_id).
+	 */
+	public static function required_capability(): string {
+		/**
+		 * Filters the capability required to view or act on the Tools → Revisions
+		 * overview page. Per-parent authorization still runs via
+		 * current_user_can('edit_post', $parent_id) inside handle_bulk_post().
+		 *
+		 * @param string $capability Default: 'delete_others_posts'.
+		 * @return string Capability string; falsy returns fall back to the default.
+		 */
+		$cap = apply_filters(
+			'advanced_revisions_bulk_delete_capability',
+			self::REQUIRED_CAPABILITY,
+		);
+		// @phpstan-ignore-next-line function.alreadyNarrowedType -- apply_filters can return any value via third-party hooks despite the declared return type.
+		return \is_string( $cap ) && $cap !== '' ? $cap : self::REQUIRED_CAPABILITY;
+	}
 
 	/**
 	 * Wires the admin-menu and request-handling hooks.
@@ -35,7 +60,7 @@ final class OverviewPage {
 		add_management_page(
 			__( 'Revisions Overview', 'advanced-revisions' ),
 			__( 'Revisions', 'advanced-revisions' ),
-			self::REQUIRED_CAPABILITY,
+			self::required_capability(),
 			self::MENU_SLUG,
 			[ self::class, 'render' ],
 		);
@@ -45,7 +70,7 @@ final class OverviewPage {
 	 * Renders the overview table.
 	 */
 	public static function render(): void {
-		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) ) {
+		if ( ! current_user_can( self::required_capability() ) ) {
 			return;
 		}
 
@@ -77,7 +102,7 @@ final class OverviewPage {
 	 * Handles the bulk-delete POST submission from the overview form.
 	 */
 	public static function handle_bulk_post(): void {
-		if ( ! current_user_can( self::REQUIRED_CAPABILITY ) ) {
+		if ( ! current_user_can( self::required_capability() ) ) {
 			wp_die( esc_html__( 'Insufficient permissions.', 'advanced-revisions' ) );
 		}
 
@@ -91,11 +116,37 @@ final class OverviewPage {
 		$selected = self::selected_parent_ids();
 		if ( $selected === [] ) {
 			wp_safe_redirect( self::page_url( [ 'ar_bulk' => 'empty' ] ) );
-			return;
+			exit();
+		}
+
+		// Per-parent authorization. A user who can reach this screen still
+		// shouldn't be able to delete revisions for parents they can't edit
+		// (custom caps, post-type-specific roles). Unauthorized IDs drop out
+		// and are counted separately in the completion notice.
+		$authorized = [];
+		$denied     = 0;
+		foreach ( $selected as $parent_id ) {
+			if ( current_user_can( 'edit_post', $parent_id ) ) {
+				$authorized[] = $parent_id;
+				continue;
+			}
+			$denied++;
+		}
+
+		if ( $authorized === [] ) {
+			wp_safe_redirect(
+				self::page_url(
+					[
+						'ar_bulk'   => 'done',
+						'ar_denied' => (string) $denied,
+					],
+				),
+			);
+			exit();
 		}
 
 		$deleter = new RevisionDeleter( new RevisionRepository() );
-		$result  = $deleter->delete_for_parents( $selected );
+		$result  = $deleter->delete_for_parents( $authorized );
 
 		// Invalidate aggregate caches so the dashboard widget reflects reality.
 		DashboardWidget::flush();
@@ -106,9 +157,11 @@ final class OverviewPage {
 					'ar_bulk'    => 'done',
 					'ar_deleted' => (string) $result['deleted'],
 					'ar_skipped' => (string) $result['skipped'],
+					'ar_denied'  => (string) $denied,
 				],
 			),
 		);
+		exit();
 	}
 
 	/**
@@ -142,19 +195,51 @@ final class OverviewPage {
 		}
 
 		if ( $state === 'done' ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$deleted = isset( $_GET['ar_deleted'] ) ? (int) $_GET['ar_deleted'] : 0;
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$skipped = isset( $_GET['ar_skipped'] ) ? (int) $_GET['ar_skipped'] : 0;
+			wp_admin_notice(
+				self::done_notice_message(),
+				[ 'type' => 'success' ],
+			);
+		}
+	}
 
-			$message = \sprintf(
-				/* translators: 1: deleted count, 2: skipped count */
-				esc_html__( 'Deleted %1$d revisions. %2$d protected revisions were skipped.', 'advanced-revisions' ),
+	/**
+	 * Assembles the done-state notice message from the redirect's query args.
+	 *
+	 * Reports deletion count plus, when non-zero, the number of revisions
+	 * skipped due to tag-based protection and the number of posts the current
+	 * user wasn't authorized to edit. Integer-cast input is safe to interpolate
+	 * into the translated sentence; no raw strings reach the output.
+	 */
+	private static function done_notice_message(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- parsed from redirect query args.
+		$deleted = isset( $_GET['ar_deleted'] ) ? (int) $_GET['ar_deleted'] : 0;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$skipped = isset( $_GET['ar_skipped'] ) ? (int) $_GET['ar_skipped'] : 0;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$denied = isset( $_GET['ar_denied'] ) ? (int) $_GET['ar_denied'] : 0;
+
+		$parts = [
+			\sprintf(
+				/* translators: %d: number of deleted revisions */
+				esc_html__( 'Deleted %d revisions.', 'advanced-revisions' ),
 				$deleted,
+			),
+		];
+		if ( $skipped > 0 ) {
+			$parts[] = \sprintf(
+				/* translators: %d: number of protected revisions that were skipped */
+				esc_html__( '%d protected revisions were skipped.', 'advanced-revisions' ),
 				$skipped,
 			);
-			wp_admin_notice( $message, [ 'type' => 'success' ] );
 		}
+		if ( $denied > 0 ) {
+			$parts[] = \sprintf(
+				/* translators: %d: number of posts the user lacked permission to edit */
+				esc_html__( '%d posts were skipped because you lack permission to edit them.', 'advanced-revisions' ),
+				$denied,
+			);
+		}
+		return \implode( ' ', $parts );
 	}
 
 	/**
