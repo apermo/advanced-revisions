@@ -184,7 +184,7 @@ final class OverviewPage {
 			return;
 		}
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$state = \is_string( $_GET['ar_bulk'] ) ? sanitize_key( $_GET['ar_bulk'] ) : '';
+		$state = \is_string( $_GET['ar_bulk'] ) ? sanitize_key( wp_unslash( $_GET['ar_bulk'] ) ) : '';
 
 		if ( $state === 'empty' ) {
 			wp_admin_notice(

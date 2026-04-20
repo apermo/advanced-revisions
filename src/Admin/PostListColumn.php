@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Apermo\AdvancedRevisions\Admin;
 
 use WP_Post;
+use WP_Query;
 
 /**
  * Adds a "Revisions" column + "Manage revisions" row action to the Posts/Pages
@@ -279,18 +280,18 @@ final class PostListColumn {
 	/**
 	 * Extracts post IDs from the main $wp_query's current page of results.
 	 *
-	 * @param mixed $wp_query Global $wp_query reference (WP_Query or null).
+	 * @param WP_Query|null $wp_query Global $wp_query reference, or null when unavailable.
 	 * @return array<int, int>
 	 */
-	private static function current_screen_post_ids( mixed $wp_query ): array {
-		if ( ! \is_object( $wp_query ) || ! isset( $wp_query->posts ) || ! \is_array( $wp_query->posts ) ) {
+	private static function current_screen_post_ids( ?WP_Query $wp_query ): array {
+		if ( ! $wp_query instanceof WP_Query ) {
 			return [];
 		}
 
 		$ids = [];
 		foreach ( $wp_query->posts as $post ) {
-			if ( \is_object( $post ) && isset( $post->ID ) ) {
-				$ids[] = (int) $post->ID;
+			if ( $post instanceof WP_Post ) {
+				$ids[] = $post->ID;
 			} elseif ( \is_int( $post ) ) {
 				$ids[] = $post;
 			}

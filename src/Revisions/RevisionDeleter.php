@@ -47,7 +47,8 @@ final class RevisionDeleter {
 	public function delete_for_parents( array $parent_ids ): array {
 		$revision_ids = $this->repository->revision_ids_for_parents( $parent_ids );
 		$deletable    = ProtectionService::filter_deletable( $revision_ids );
-		$protected    = \count( $revision_ids ) - \count( $deletable );
+		// Arithmetic avoids a second term-fetch vs. ProtectionService::count_protected().
+		$protected = \count( $revision_ids ) - \count( $deletable );
 
 		$deleted = 0;
 		foreach ( $deletable as $revision_id ) {
