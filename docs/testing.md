@@ -63,16 +63,16 @@ this layer.
 
 | Issue | Feature                              | Unit | Integration | E2E | Fixture scenario  |
 |-------|--------------------------------------|:----:|:-----------:|:---:|-------------------|
-| #1    | Per-type revision limit              |  ✓   |             |     | `mixed-types`     |
-| #2    | Admin overview                       |  ✓   |             |     | `heavy-site`      |
-| #3    | Bulk delete from overview            |  ✓   |             |     | `heavy-site`      |
-| #4    | Post list column                     |  ✓   |             |     | `normal-site`     |
-| #10   | Dashboard widget                     |  ✓   |             |     | `normal-site`     |
-| #11   | Per-post override                    |  ✓   |             |     | `mixed-types`     |
-| #13   | Tagging + protection                 |  ✓   |             |     | `tagged-site`     |
-| #14   | Dev fixtures CPTs                    |  ✓   |             |     | n/a               |
-| #15   | Content seeder (WP-CLI)              |  ✓   |             |     | n/a               |
-| #16   | Revision seeder (WP-CLI)             |  ✓   |             |     | n/a               |
+| #1    | Per-type revision limit              |  ✓   |      —      |  —  | `mixed-types`     |
+| #2    | Admin overview                       |  ✓   |      —      |  —  | `heavy-site`      |
+| #3    | Bulk delete from overview            |  ✓   |      —      |  —  | `heavy-site`      |
+| #4    | Post list column                     |  ✓   |      —      |  —  | `normal-site`     |
+| #10   | Dashboard widget                     |  ✓   |      —      |  —  | `normal-site`     |
+| #11   | Per-post override                    |  ✓   |      —      |  —  | `mixed-types`     |
+| #13   | Tagging + protection                 |  ✓   |      —      |  —  | `tagged-site`     |
+| #14   | Dev fixtures CPTs                    |  ✓   |      —      |  —  | n/a               |
+| #15   | Content seeder (WP-CLI)              |  ✓   |      —      |  —  | n/a               |
+| #16   | Revision seeder (WP-CLI)             |  ✓   |      —      |  —  | n/a               |
 
 Integration and E2E rows are intentionally empty for v0.1.0 — the test
 infrastructure lands with v0.1.0; coverage fills in as the WP-PHPUnit
