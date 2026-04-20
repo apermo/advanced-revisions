@@ -22,7 +22,7 @@ class ExampleIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The plugin or theme is active.
+	 * Verifies the plugin or theme is active.
 	 *
 	 * @return void
 	 */

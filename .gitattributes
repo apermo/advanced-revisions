@@ -8,6 +8,7 @@
 /.phpunit.cache/    export-ignore
 /setup.sh           export-ignore
 /tests/             export-ignore
+/advanced-revisions-dev/ export-ignore
 /phpcs.xml.dist     export-ignore
 /phpstan.neon.dist  export-ignore
 /phpunit.xml.dist   export-ignore

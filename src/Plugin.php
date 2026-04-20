@@ -4,8 +4,16 @@ declare(strict_types=1);
 
 namespace Apermo\AdvancedRevisions;
 
+use Apermo\AdvancedRevisions\Admin\DashboardWidget;
+use Apermo\AdvancedRevisions\Admin\OverviewPage;
+use Apermo\AdvancedRevisions\Admin\PostListColumn;
+use Apermo\AdvancedRevisions\Admin\RevisionLimitMetaBox;
+use Apermo\AdvancedRevisions\Admin\SettingsPage;
+use Apermo\AdvancedRevisions\Revisions\LimitService;
+use Apermo\AdvancedRevisions\Revisions\TaxonomyRegistrar;
+
 /**
- * Main plugin class.
+ * Represents the main plugin class.
  */
 class Plugin {
 
@@ -19,7 +27,7 @@ class Plugin {
 	private static string $file = '';
 
 	/**
-	 * Initialize the plugin.
+	 * Initializes the plugin.
 	 *
 	 * @param string $file Main plugin file path.
 	 *
@@ -34,7 +42,7 @@ class Plugin {
 	}
 
 	/**
-	 * Return the main plugin file path.
+	 * Returns the main plugin file path.
 	 *
 	 * @return string
 	 */
@@ -43,7 +51,7 @@ class Plugin {
 	}
 
 	/**
-	 * Plugin activation.
+	 * Runs on plugin activation.
 	 *
 	 * @return void
 	 */
@@ -52,7 +60,7 @@ class Plugin {
 	}
 
 	/**
-	 * Plugin deactivation.
+	 * Runs on plugin deactivation.
 	 *
 	 * @return void
 	 */
@@ -61,11 +69,19 @@ class Plugin {
 	}
 
 	/**
-	 * Boot the plugin after all plugins are loaded.
+	 * Boots the plugin after all plugins are loaded.
 	 *
 	 * @return void
 	 */
 	public static function boot(): void {
-		// Initialize plugin functionality.
+		LimitService::register();
+		TaxonomyRegistrar::register();
+		if ( is_admin() ) {
+			SettingsPage::register();
+			PostListColumn::register();
+			DashboardWidget::register();
+			RevisionLimitMetaBox::register();
+			OverviewPage::register();
+		}
 	}
 }

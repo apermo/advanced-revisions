@@ -4,3 +4,13 @@ parameters:
         - src
         - plugin.php
         - uninstall.php
+        - advanced-revisions-dev/advanced-revisions-dev.php
+        - advanced-revisions-dev/src
+    ignoreErrors:
+        # WP-CLI is only available when run under wp-cli. The dev plugin gates
+        # its registration behind defined('WP_CLI') so these calls are safe;
+        # no WP-CLI stub is installed because the production plugin never uses it.
+        -
+            message: '#Call to static method .+ on an unknown class WP_CLI\.#'
+            paths:
+                - advanced-revisions-dev/*

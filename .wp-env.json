@@ -1,0 +1,11 @@
+{
+    "core": null,
+    "plugins": [
+        ".",
+        "./advanced-revisions-dev"
+    ],
+    "config": {
+        "WP_DEBUG": true,
+        "SCRIPT_DEBUG": true
+    }
+}

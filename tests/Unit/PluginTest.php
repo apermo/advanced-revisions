@@ -7,6 +7,7 @@ namespace Apermo\AdvancedRevisions\Tests\Unit;
 use Apermo\AdvancedRevisions\Plugin;
 use Brain\Monkey;
 use Brain\Monkey\Functions;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -15,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class PluginTest extends TestCase {
 
 	/**
-	 * Set up Brain Monkey.
+	 * Sets up Brain Monkey.
 	 *
 	 * @return void
 	 */
@@ -25,7 +26,7 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Tear down Brain Monkey.
+	 * Tears down Brain Monkey.
 	 *
 	 * @return void
 	 */
@@ -35,7 +36,7 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Verify init registers activation and deactivation hooks.
+	 * Verifies init() registers activation and deactivation hooks.
 	 *
 	 * @return void
 	 */
@@ -58,7 +59,7 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Verify init stores the plugin file path.
+	 * Verifies init() stores the plugin file path.
 	 *
 	 * @return void
 	 */
@@ -79,7 +80,7 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Verify activate can be called without error.
+	 * Verifies activate() can be called without error.
 	 *
 	 * @return void
 	 */
@@ -89,7 +90,7 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Verify deactivate can be called without error.
+	 * Verifies deactivate() can be called without error.
 	 *
 	 * @return void
 	 */
@@ -99,12 +100,16 @@ class PluginTest extends TestCase {
 	}
 
 	/**
-	 * Verify boot can be called without error.
+	 * Verifies boot() wires the per-type revision limit filter.
 	 *
 	 * @return void
 	 */
 	public function test_boot(): void {
+		Functions\when( 'is_admin' )->justReturn( false );
+		Functions\expect( 'add_filter' )
+			->once()
+			->with( 'wp_revisions_to_keep', Mockery::type( 'array' ), 10, 2 );
+
 		Plugin::boot();
-		$this->assertTrue( true );
 	}
 }

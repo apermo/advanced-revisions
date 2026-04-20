@@ -15,7 +15,7 @@ if ! echo "$STAGED_PHP_FILES" | xargs vendor/bin/phpcs --standard=phpcs.xml.dist
 fi
 
 echo "Running PHPStan..."
-if ! vendor/bin/phpstan analyse --no-progress --memory-limit=512M; then
+if ! vendor/bin/phpstan analyse --no-progress --memory-limit=1G; then
     echo "PHPStan failed. Fix issues before committing."
     exit 1
 fi
