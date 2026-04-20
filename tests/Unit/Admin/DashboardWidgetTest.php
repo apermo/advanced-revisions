@@ -131,6 +131,7 @@ final class DashboardWidgetTest extends TestCase {
 		Functions\when( '_n' )->alias(
 			static fn( string $single, string $plural, int $count ): string => $count === 1 ? $single : $plural,
 		);
+		Functions\when( 'wp_kses' )->returnArg();
 		Functions\when( 'get_transient' )->justReturn(
 			[
 				'total'     => 42,

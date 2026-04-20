@@ -56,18 +56,29 @@ final class DashboardWidget {
 			return;
 		}
 
-		\printf(
-			'<p><strong>%1$s</strong> %2$s</p>',
-			esc_html( number_format_i18n( $stats['total'] ) ),
-			esc_html__( 'revisions stored site-wide.', 'advanced-revisions' ),
-		);
+		echo '<p>' . wp_kses(
+			\sprintf(
+				/* translators: %s: formatted revision count, wrapped in <strong> */
+				_n(
+					'<strong>%s</strong> revision stored site-wide.',
+					'<strong>%s</strong> revisions stored site-wide.',
+					$stats['total'],
+					'advanced-revisions',
+				),
+				esc_html( number_format_i18n( $stats['total'] ) ),
+			),
+			[ 'strong' => [] ],
+		) . '</p>';
 
 		if ( $stats['est_bytes'] > 0 ) {
-			\printf(
-				'<p>%1$s <strong>%2$s</strong></p>',
-				esc_html__( 'Estimated database footprint:', 'advanced-revisions' ),
-				esc_html( size_format( $stats['est_bytes'] ) ),
-			);
+			echo '<p>' . wp_kses(
+				\sprintf(
+					/* translators: %s: formatted database size, wrapped in <strong> */
+					__( 'Estimated database footprint: <strong>%s</strong>', 'advanced-revisions' ),
+					esc_html( size_format( $stats['est_bytes'] ) ),
+				),
+				[ 'strong' => [] ],
+			) . '</p>';
 		}
 
 		if ( $stats['top'] !== [] ) {
