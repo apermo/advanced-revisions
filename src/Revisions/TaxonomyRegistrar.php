@@ -15,7 +15,6 @@ final class TaxonomyRegistrar {
 
 	public const TAXONOMY       = 'revision_tag';
 	public const PROTECTED_META = 'protected';
-	public const NOTE_META      = '_advanced_revisions_note';
 
 	/**
 	 * Registers the taxonomy, term meta, and post meta on init.
@@ -52,7 +51,7 @@ final class TaxonomyRegistrar {
 	}
 
 	/**
-	 * Registers term meta for the `protected` flag and post meta for per-revision notes.
+	 * Registers term meta for the `protected` flag.
 	 */
 	public static function register_meta(): void {
 		register_term_meta(
@@ -63,17 +62,6 @@ final class TaxonomyRegistrar {
 				'single'            => true,
 				'show_in_rest'      => true,
 				'sanitize_callback' => static fn( $value ): bool => (bool) $value,
-			],
-		);
-
-		register_post_meta(
-			'revision',
-			self::NOTE_META,
-			[
-				'type'              => 'string',
-				'single'            => true,
-				'show_in_rest'      => true,
-				'sanitize_callback' => 'sanitize_text_field',
 			],
 		);
 	}

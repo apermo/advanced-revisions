@@ -72,11 +72,10 @@ final class TaxonomyRegistrarTest extends TestCase {
 	}
 
 	/**
-	 * Asserts meta registration covers both the protected flag and the note key.
+	 * Asserts meta registration covers the protected flag term meta.
 	 */
-	public function test_register_meta_registers_protected_flag_and_note(): void {
+	public function test_register_meta_registers_protected_flag(): void {
 		$term_meta = [];
-		$post_meta = [];
 		Functions\when( 'register_term_meta' )->alias(
 			static function ( string $taxonomy, string $key, array $args ) use ( &$term_meta ): void {
 				$term_meta[] = [
@@ -86,24 +85,11 @@ final class TaxonomyRegistrarTest extends TestCase {
 				];
 			},
 		);
-		Functions\when( 'register_post_meta' )->alias(
-			static function ( string $post_type, string $key, array $args ) use ( &$post_meta ): void {
-				$post_meta[] = [
-					'post_type' => $post_type,
-					'key'       => $key,
-					'args'      => $args,
-				];
-			},
-		);
 
 		TaxonomyRegistrar::register_meta();
 
 		self::assertCount( 1, $term_meta );
 		self::assertSame( 'revision_tag', $term_meta[0]['taxonomy'] );
 		self::assertSame( 'protected', $term_meta[0]['key'] );
-
-		self::assertCount( 1, $post_meta );
-		self::assertSame( 'revision', $post_meta[0]['post_type'] );
-		self::assertSame( '_advanced_revisions_note', $post_meta[0]['key'] );
 	}
 }
