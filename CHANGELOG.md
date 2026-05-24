@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-05-24
+
+### Changed
+
+- Dev tooling synced with `apermo/template-wordpress` 0.10.0:
+    - Migrated git hooks from `.githooks/` to [husky](https://typicode.github.io/husky/)
+      v9 + [lint-staged](https://github.com/lint-staged/lint-staged). Hooks now
+      activate automatically via `npm install` (the `prepare` script) instead
+      of requiring a manual `core.hooksPath` setup.
+    - Added `.husky/commit-msg` hook mirroring the rules in
+      `apermo/reusable-workflows`'s `reusable-conventional-commits.yml`
+      enforced by the `pr-validation` CI workflow — invalid commits now
+      fail at `git commit` time instead of only after `git push`.
+
+  After pulling, run `npm install` so husky re-links the hooks.
+
 ## [0.1.0] - 2026-04-20
 
 ### Added
