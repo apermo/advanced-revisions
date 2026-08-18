@@ -5,7 +5,7 @@
  * Plugin Name: Advanced Revisions
  * Plugin URI:  https://github.com/apermo/advanced-revisions
  * Description: Advanced features for WordPress revisions: configurable limits per post type, an admin overview, and bulk deletion tools.
- * Version:     0.1.0
+ * Version:     0.1.1
  * Author:      Christoph Daum
  * Author URI:  https://apermo.de
  * License:     GPL-2.0-or-later

@@ -4,7 +4,7 @@ Tags: revisions, post-revisions, content, editor, admin
 Requires at least: 6.4
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,9 @@ Planned features:
 2. Activate the plugin through the "Plugins" screen in WordPress
 
 == Changelog ==
+
+= 0.1.1 =
+* Dev tooling sync with `apermo/template-wordpress` 0.10.0: migrated git hooks to husky + lint-staged and added a local `commit-msg` hook validating conventional-commit format.
 
 = 0.1.0 =
 * Initial release — project scaffolding only, no user-facing features yet
